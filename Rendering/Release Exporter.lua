@@ -1,5 +1,6 @@
 -- @description Release Exporter: fill EP metadata and export every song in one click
 -- @author Clément Decou
+-- @link https://github.com/Amorfx/reaper-release-plugin
 -- @version 0.1.0
 -- @about
 --   Fill EP-level and per-song metadata (title, artist, ISRC, composer, cover...) in one window,

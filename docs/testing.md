@@ -5,7 +5,7 @@ Run on REAPER 7.0 (oldest supported) and on the latest REAPER, with ReaImGui ≥
 ## Setup
 1. Symlink the repo into REAPER's Scripts folder (*Options > Show REAPER resource path*):
    `ln -s "$PWD" "<resource path>/Scripts/reaper-release-plugin"`
-2. *Actions > Show action list > New action > Load ReaScript…* → `Release Exporter.lua`.
+2. *Actions > Show action list > New action > Load ReaScript…* → `Rendering/Release Exporter.lua`.
 3. Sample project: 3 audio items on one track, saved as `EP.rpp` in an empty folder.
 
 ## Checks

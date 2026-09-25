@@ -12,3 +12,14 @@ jobs:
       - run: luarocks install busted && luarocks install luacheck
       - run: luacheck .
       - run: busted
+  reapack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - run: gem install reapack-index
+      - run: reapack-index --check

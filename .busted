@@ -2,6 +2,6 @@ return {
   default = {
     ROOT = { "tests" },
     pattern = "_spec",
-    lpath = "./?.lua;./?/init.lua",
+    lpath = "./Rendering/?.lua;./Rendering/?/init.lua;./?.lua",
   },
 }
