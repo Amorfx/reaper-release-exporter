@@ -19,7 +19,10 @@ M.FIELDS = {
   { key = "composer", ID3 = "TCOM", VORBIS = "COMPOSER" },
 }
 
-M.COVER_KEYS = { "ID3:APIC_FILE" }
+-- ID3 covers MP3 and the ID3 chunk of WAV files; FLACPIC is FLAC's own PICTURE block.
+M.COVER_SCHEMES = { "ID3", "FLACPIC" }
+M.COVER_KEYS = {}
+for _, scheme in ipairs(M.COVER_SCHEMES) do M.COVER_KEYS[#M.COVER_KEYS + 1] = scheme .. ":APIC_FILE" end
 
 function M.build(t)
   local out = {}
@@ -38,8 +41,10 @@ function M.build(t)
     add("INFO:ITRK", tostring(t.number))
   end
   if t.cover and t.cover ~= "" then
-    for _, id in ipairs(M.COVER_KEYS) do add(id, t.cover) end
-    add("ID3:APIC_TYPE", "3")
+    for _, scheme in ipairs(M.COVER_SCHEMES) do
+      add(scheme .. ":APIC_FILE", t.cover)
+      add(scheme .. ":APIC_TYPE", "3") -- 3 = front cover
+    end
   end
   return out
 end

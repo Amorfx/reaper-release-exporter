@@ -8,6 +8,7 @@ package.path = root .. "?.lua;" .. root .. "?/init.lua;" .. package.path
 local mapper = require("release_exporter.metadata_mapper")
 local renderer = require("release_exporter.renderer")
 local fs = require("release_exporter.fs")
+local formats = require("release_exporter.formats")
 
 local proj = 0
 local dir = r.GetResourcePath() .. "/ReleaseExporterProbe"
@@ -43,9 +44,14 @@ renderer.restore(r, proj, state)
 
 -- 2. Real renders through the renderer (restores the user's settings afterwards).
 p("=== renders ===")
-for _, run in ipairs({ { name = "e2e-mp3", secondary = "l3pm" }, { name = "e2e-flac", secondary = "calf" } }) do
+-- Uses the shipped presets, so this also verifies formats.lua (bit depth, MP3 bitrate).
+for _, run in ipairs({
+  { name = "e2e-wav24-mp3", primary = "wav24", secondary = "mp3_320" },
+  { name = "e2e-wav16-flac", primary = "wav16", secondary = "flac" },
+}) do
   local report = renderer.render(r, proj, { { title = run.name, basename = run.name, start = 0, stop = 2, tags = tags } },
-    { output_dir = dir, primary_format = "evaw", secondary_format = run.secondary, srate = 0 })
+    { output_dir = dir, primary_format = formats.primary(run.primary), secondary_format = formats.secondary(run.secondary),
+      srate = 0 })
   local item = report.items[1] or {}
   p(("%s ok=%s %s %s"):format(run.name, tostring(item.ok), item.error or "", report.error or ""))
   for _, path in ipairs(item.files or {}) do p("  " .. path) end

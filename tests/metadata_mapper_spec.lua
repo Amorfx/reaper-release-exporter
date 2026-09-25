@@ -42,6 +42,14 @@ describe("metadata_mapper.build", function()
     assert.is_false(has_prefix(mapper.build(track()), "ID3:TYER"))
   end)
 
+  it("embeds the cover in both ID3 (MP3, WAV) and FLAC pictures", function()
+    local set = as_set(mapper.build(track()))
+    for _, expected in ipairs({ "ID3:APIC_FILE|/art/cover.jpg", "ID3:APIC_TYPE|3",
+      "FLACPIC:APIC_FILE|/art/cover.jpg", "FLACPIC:APIC_TYPE|3" }) do
+      assert.is_true(set[expected] == true, expected)
+    end
+  end)
+
   it("uses every configured cover key", function()
     local set = as_set(mapper.build(track()))
     for _, key in ipairs(mapper.COVER_KEYS) do
@@ -54,6 +62,7 @@ describe("metadata_mapper.build", function()
     assert.is_false(has_prefix(list, "ID3:TSRC"))
     assert.is_false(has_prefix(list, "ID3:TCOM"))
     assert.is_false(has_prefix(list, "ID3:APIC"))
+    assert.is_false(has_prefix(list, "FLACPIC:"))
   end)
 
   it("keeps values containing separators intact", function()

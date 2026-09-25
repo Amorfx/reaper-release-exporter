@@ -3,13 +3,13 @@
 local M = {}
 
 M.PRIMARY = {
-  wav24 = "evaw", -- replace with the captured base64 for WAV 24-bit
-  wav16 = "evaw", -- replace with the captured base64 for WAV 16-bit
+  wav24 = "ZXZhdxgAAQ==", -- captured on REAPER 7.80: "evaw" + 0x18 (24-bit PCM)
+  wav16 = "ZXZhdxAAAQ==", -- same config with 0x10 (16-bit PCM)
 }
 
 M.SECONDARY = {
-  mp3_320 = "l3pm", -- replace with the captured base64 for MP3 CBR 320
-  flac = "calf",    -- replace with the captured base64 for FLAC
+  mp3_320 = "l3pm", -- TODO(capture): REAPER default is 128 kbps, not 320
+  flac = "calf",    -- TODO(capture): REAPER default is 16-bit
   none = "",
 }
 
