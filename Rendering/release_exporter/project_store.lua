@@ -23,6 +23,16 @@ local function merge(defaults, data)
   return out
 end
 
+-- Values that passed the type check but are not a known choice would crash later (unknown format, blank pattern).
+local function sanitize_settings(settings)
+  local defaults = model.default_settings()
+  if not model.PRIMARY_CHOICES[settings.primary] then settings.primary = defaults.primary end
+  if not model.SECONDARY_CHOICES[settings.secondary] then settings.secondary = defaults.secondary end
+  if not model.SAMPLE_RATE_CHOICES[settings.srate] then settings.srate = defaults.srate end
+  if model.blank(settings.pattern) then settings.pattern = defaults.pattern end
+  return settings
+end
+
 function M.load(r, proj)
   local _, ep = r.GetProjExtState(proj, M.EXT, "ep")
   local _, settings = r.GetProjExtState(proj, M.EXT, "settings")
@@ -36,13 +46,15 @@ function M.load(r, proj)
     loaded_settings.output_dir = ""
   end
 
+  sanitize_settings(loaded_settings)
+
   local tracks = {}
   local idx = 0
   while true do
     local ok, key, value = r.EnumProjExtState(proj, M.EXT, idx)
     if not ok then break end
     if key:lower():sub(1, 6) == "track:" then
-      tracks[key:sub(7)] = merge(model.default_track(), decode(value))
+      tracks[key:sub(7):upper()] = merge(model.default_track(), decode(value))
     end
     idx = idx + 1
   end

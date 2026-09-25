@@ -11,7 +11,7 @@ local App = {}
 App.__index = App
 
 function App.new(r)
-  local self = setmetatable({ r = r, change_count = -1 }, App)
+  local self = setmetatable({ r = r, change_count = -1, generation = 0 }, App)
   self:refresh(true)
   return self
 end
@@ -19,11 +19,14 @@ end
 function App:refresh(force)
   local proj, projfn = self.r.EnumProjects(-1)
   local count = self.r.GetProjectStateChangeCount(proj)
-  local switched = proj ~= self.proj
+  -- REAPER keeps the same ReaProject pointer when a project is opened in the current tab, so the path counts too.
+  -- A Save As only changes the path; reloading is harmless because every edit is already stored.
+  local switched = proj ~= self.proj or (projfn or "") ~= self.projfn
   if not force and not switched and count == self.change_count then return false end
   if force or switched then
     local data = store.load(self.r, proj)
     self.ep, self.tracks, self.settings = data.ep, data.tracks, data.settings
+    self.generation = self.generation + 1
   end
   self.proj, self.projfn, self.change_count = proj, projfn or "", count
   self:rebuild()
@@ -96,18 +99,36 @@ function App:can_export()
   return #self.validation.errors == 0
 end
 
+function App:confirm_continue(item)
+  local message = ('"%s" was not rendered (cancelled or failed).\n\nContinue with the remaining songs?'):format(item.title)
+  return self.r.ShowMessageBox(message, "Release Exporter", 4) == 6
+end
+
 function App:export()
-  local dir = self:output_dir()
   local report
-  if fs.ensure_dir(self.r, dir) then
-    report = renderer.render(self.r, self.proj, self:jobs(), {
-      output_dir = dir,
-      primary_format = formats.primary(self.settings.primary),
-      secondary_format = formats.secondary(self.settings.secondary),
-      srate = self.settings.srate,
-    })
+  local proj, projfn = self.r.EnumProjects(-1)
+  -- REAPER renders the active project, so it must still be the one the user confirmed.
+  if proj ~= self.proj or (projfn or "") ~= self.projfn then
+    report = { items = {}, error = "The active project changed; review it and export again." }
   else
-    report = { items = {}, error = "Cannot create or write to " .. dir }
+    self:refresh()
+    if not self:can_export() then
+      report = { items = {}, error = self.validation.errors[1].message }
+    end
+  end
+  local dir = self:output_dir()
+  if not report then
+    if fs.ensure_dir(self.r, dir) then
+      report = renderer.render(self.r, self.proj, self:jobs(), {
+        output_dir = dir,
+        primary_format = formats.primary(self.settings.primary),
+        secondary_format = formats.secondary(self.settings.secondary),
+        srate = self.settings.srate,
+        on_failure = function(item) return self:confirm_continue(item) end,
+      })
+    else
+      report = { items = {}, error = "Cannot create or write to " .. dir }
+    end
   end
   report.output_dir = dir
   self.last_report = report

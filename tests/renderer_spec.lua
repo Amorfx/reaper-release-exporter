@@ -101,4 +101,39 @@ describe("renderer.render", function()
     renderer.render(r, r.proj, { job("01 - Intro", 0, 10) }, opts)
     assert.is_false(fs.exists(stale))
   end)
+  it("stops after a song produced no file when told not to continue", function()
+    local r = fake.new()
+    r.render_behavior = "missing"
+    local asked = {}
+    opts.on_failure = function(item) asked[#asked + 1] = item.title; return false end
+    local report = renderer.render(r, r.proj, { job("01 - A", 0, 1), job("02 - B", 1, 2), job("03 - C", 2, 3) }, opts)
+    assert.are.equal(1, #r.commands)
+    assert.are.same({ "01 - A" }, asked)
+    assert.are.equal(3, #report.items)
+    assert.is_false(report.items[2].ok)
+    assert.is_true(report.items[2].skipped)
+    assert.is_true(report.items[3].skipped)
+  end)
+
+  it("keeps going when on_failure says to continue", function()
+    local r = fake.new()
+    r.render_behavior = "missing"
+    opts.on_failure = function() return true end
+    renderer.render(r, r.proj, { job("01 - A", 0, 1), job("02 - B", 1, 2) }, opts)
+    assert.are.equal(2, #r.commands)
+  end)
+
+  it("skips the render when a stale file cannot be deleted", function()
+    local r = fake.new()
+    local stale = opts.output_dir .. "/01 - Intro.wav"
+    local f = assert(io.open(stale, "wb"))
+    f:write("old")
+    f:close()
+    os.execute('chmod 555 "' .. opts.output_dir .. '"')
+    local report = renderer.render(r, r.proj, { job("01 - Intro", 0, 10) }, opts)
+    os.execute('chmod 755 "' .. opts.output_dir .. '"')
+    assert.are.equal(0, #r.commands)
+    assert.is_false(report.items[1].ok)
+    assert.is_truthy(report.items[1].error:find("Cannot overwrite", 1, true))
+  end)
 end)

@@ -58,4 +58,16 @@ describe("regions.create_from_selected_items", function()
     assert.are.equal(0, regions.create_from_selected_items(r, r.proj))
     assert.are.equal(0, #r.undo_points)
   end)
+  it("upper-cases GUIDs so they match stored track keys", function()
+    local r = fake.new()
+    r.add_region(0, 10, "A")
+    local original = r.GetSetProjectInfo_String
+    r.GetSetProjectInfo_String = function(proj, key, value, is_set)
+      local ok, result = original(proj, key, value, is_set)
+      if key:match("^MARKER_GUID") then result = result:lower() end
+      return ok, result
+    end
+    local guid = regions.list(r, r.proj)[1].guid
+    assert.are.equal(guid:upper(), guid)
+  end)
 end)

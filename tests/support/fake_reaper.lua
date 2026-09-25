@@ -39,7 +39,7 @@ function M.new()
     local list = markers()
     list[#list + 1] = {
       isrgn = isrgn, start = start, stop = stop, name = name, number = next_id, color = 0,
-      guid = string.format("{%08X-0000-0000-0000-000000000000}", next_id),
+      guid = string.format("{%08X-ABCD-0000-0000-000000000000}", next_id),
     }
     sort()
     touch()
@@ -141,6 +141,10 @@ function M.new()
   -- Ext state
   function r.SetProjExtState(proj, section, key, value)
     local ext = state(proj).ext
+    if key == "" then
+      ext[section] = nil
+      return 0
+    end
     ext[section] = ext[section] or {}
     ext[section][key] = value ~= "" and value or nil
     return 0
@@ -193,6 +197,12 @@ function M.new()
     return f ~= nil
   end
   function r.GetOS() return r.os end
+  r.message_boxes = {}
+  r.message_box_answer = 6 -- 6 = Yes, 7 = No
+  function r.ShowMessageBox(msg)
+    r.message_boxes[#r.message_boxes + 1] = msg
+    return r.message_box_answer
+  end
 
   -- Media items
   function r.CountSelectedMediaItems() return #r.selected_items end

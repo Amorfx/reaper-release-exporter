@@ -70,13 +70,14 @@ local function render_one(r, proj, job, opts)
   local files = split(targets, ";")
   if #files == 0 then return false, files, "REAPER reported no file to render." end
   for _, path in ipairs(files) do
-    if fs.exists(path) then fs.remove(path) end
+    -- A file we cannot delete would make REAPER show its own overwrite prompt mid-batch.
+    if fs.exists(path) and not fs.remove(path) then return false, files, "Cannot overwrite " .. path end
   end
 
   r.Main_OnCommand(M.RENDER_COMMAND, 0)
 
   for _, path in ipairs(files) do
-    if not fs.exists(path) or fs.size(path) == 0 then return false, files, "Missing or empty file: " .. path end
+    if not fs.exists(path) or fs.size(path) == 0 then return false, files, "Missing or empty file: " .. path, true end
   end
   return true, files
 end
@@ -91,9 +92,17 @@ function M.render(r, proj, jobs, opts)
     r.GetSetProjectInfo(proj, "RENDER_SRATE", opts.srate or 0, true)
     r.GetSetProjectInfo_String(proj, "RENDER_FORMAT", opts.primary_format, true)
     r.GetSetProjectInfo_String(proj, "RENDER_FORMAT2", opts.secondary_format or "", true)
-    for _, job in ipairs(jobs) do
-      local item_ok, files, item_err = render_one(r, proj, job, opts)
-      report.items[#report.items + 1] = { title = job.title, ok = item_ok, files = files, error = item_err }
+    for i, job in ipairs(jobs) do
+      local item_ok, files, item_err, rendered = render_one(r, proj, job, opts)
+      local item = { title = job.title, ok = item_ok, files = files, error = item_err }
+      report.items[#report.items + 1] = item
+      -- A render that ran but produced nothing is usually a cancel: ask before starting the next one.
+      if rendered and i < #jobs and opts.on_failure and not opts.on_failure(item) then
+        for j = i + 1, #jobs do
+          report.items[#report.items + 1] = { title = jobs[j].title, ok = false, skipped = true, files = {}, error = "Skipped." }
+        end
+        break
+      end
     end
   end)
   M.restore(r, proj, state)

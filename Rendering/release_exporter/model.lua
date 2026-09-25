@@ -4,6 +4,9 @@ local M = {}
 
 M.FORMAT_EXT = { wav16 = "wav", wav24 = "wav", mp3_320 = "mp3", flac = "flac" }
 M.FORMAT_LABELS = { wav24 = "WAV 24-bit", wav16 = "WAV 16-bit", mp3_320 = "MP3 320 kbps", flac = "FLAC", none = "None" }
+M.PRIMARY_CHOICES = { wav24 = true, wav16 = true }
+M.SECONDARY_CHOICES = { mp3_320 = true, flac = true, none = true }
+M.SAMPLE_RATE_CHOICES = { [0] = true, [44100] = true, [48000] = true }
 
 function M.new_ep()
   return { artist = "", album_artist = "", album = "", year = "", genre = "", label = "", copyright = "", cover = "" }

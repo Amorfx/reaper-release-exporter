@@ -3,6 +3,11 @@ local M = {}
 
 local drafts = {}
 
+-- Forgets half-typed values, e.g. when the active project changes.
+function M.reset()
+  drafts = {}
+end
+
 -- Text input that reports its value only when editing ends (Enter, Tab or focus loss).
 -- A region rename then creates one undo point instead of one per keystroke.
 -- Returns the new value, or nil when nothing was committed this frame.

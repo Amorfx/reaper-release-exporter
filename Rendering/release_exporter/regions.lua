@@ -3,7 +3,7 @@ local M = {}
 
 local function guid_at(r, proj, idx)
   local ok, guid = r.GetSetProjectInfo_String(proj, "MARKER_GUID:" .. idx, "", false)
-  if ok and guid ~= "" then return guid end
+  if ok and guid ~= "" then return guid:upper() end
 end
 
 function M.list(r, proj)

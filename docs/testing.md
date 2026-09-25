@@ -23,3 +23,9 @@ Run on REAPER 7.0 (oldest supported) and on the latest REAPER, with ReaImGui ≥
 - [ ] Unsaved new project with regions → the "Save the project or choose an output folder." error blocks Export.
 - [ ] A title with `AC/DC: Live?` → exported as `01 - AC-DC- Live-.wav`.
 - [ ] Open two project tabs with different data and switch between them → the window follows the active tab.
+- [ ] Open another project **in the same tab** (File > Open project, not a new tab) → the EP card shows the new project's data, never the previous one.
+- [ ] Unsaved project: fill everything, then Save → the output folder error disappears without any other edit. Save As to another folder → the summary shows the new folder.
+- [ ] Type in the EP Artist field without leaving it, then click another project tab → the text is not saved in either project.
+- [ ] During an export, press Cancel in REAPER's render window → a prompt asks whether to continue. "No" marks the remaining songs as skipped. Check whether REAPER left a partial file for the cancelled song (note it in docs/reaper-api-notes.md).
+- [ ] Open one of the exported WAVs in another app (Windows: keeps it locked), export again → that song reports "Cannot overwrite …", no REAPER overwrite prompt.
+- [ ] Export an 8-song EP (several minutes) → the window and the report still show afterwards.

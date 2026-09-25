@@ -36,6 +36,11 @@ local function loop()
     app.pending_export = false
     app:export()
     app.show_report = true
+    -- ReaImGui frees contexts that miss defer cycles; a long render may have done that.
+    if not ImGui.ValidatePtr(ctx, "ImGui_Context*") then
+      ctx = ImGui.CreateContext("Release Exporter")
+      ui.reset()
+    end
   end
   app:refresh()
   ImGui.SetNextWindowSize(ctx, 920, 600, ImGui.Cond_FirstUseEver)

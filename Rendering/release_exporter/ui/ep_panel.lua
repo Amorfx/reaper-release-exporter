@@ -7,6 +7,11 @@ local M = {}
 local COVER_SIZE = 110
 local cover = { path = nil, image = nil }
 
+-- Forgets the cached cover, e.g. after the ImGui context had to be recreated.
+function M.reset()
+  cover.path, cover.image = nil, nil
+end
+
 local function cover_image(ImGui, ctx, path)
   if path == cover.path then return cover.image end
   if cover.image then ImGui.Detach(ctx, cover.image) end
