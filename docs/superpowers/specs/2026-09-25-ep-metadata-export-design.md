@@ -130,10 +130,12 @@ sont donc testables en Lua standard.
 
 ### 5.3 Identité des régions
 
-- Identifiant stable = **GUID de la région**.
-- `regions.lua` utilise `GetRegionOrMarker` / `GetSetRegionOrMarkerInfo_String(…, "GUID")`
-  s'ils existent (REAPER ≥ 7.62), sinon `GetSetProjectInfo_String(proj, "MARKER_GUID:<idx>")`
-  (disponible sur toutes les versions 7.x). Le reste du code ne voit que des GUID.
+- Identifiant stable = **GUID de la région**, lu via
+  `GetSetProjectInfo_String(proj, "MARKER_GUID:<idx>")`, où `<idx>` est l'index
+  d'énumération de `EnumProjectMarkers3`. Cet appel est disponible sur toutes les
+  versions 7.x. La nouvelle API `GetRegionOrMarker` (≥ 7.62) n'est pas utilisée en
+  v1 : son index interne n'est pas documenté comme identique à celui de
+  l'énumération, et `MARKER_GUID` suffit. Le reste du code ne voit que des GUID.
 
 ### 5.4 Persistance
 
@@ -175,13 +177,15 @@ ProjExtState (EP, morceaux) ────┘                  │
 | Format principal | WAV 24 bits, fréquence du projet (16/24 bits ; projet / 44,1 / 48 kHz) |
 | Format secondaire | MP3 320 kb/s CBR (choix : MP3 320, FLAC, aucun) |
 
-- Les caractères interdits dans les noms de fichiers (`/ \ : * ? " < > |`) sont
-  remplacés par `-`, et les espaces et points en fin de nom sont supprimés.
+- Les caractères interdits dans les noms de fichiers (`/ \ : * ? " < > |`), ainsi
+  que `$` (réservé aux wildcards REAPER) et `;` (séparateur de `RENDER_TARGETS`),
+  sont remplacés par `-`. Les espaces et points en fin de nom sont supprimés.
 - Seuls les réglages nécessaires sont modifiés : bornes, dossier, nom, formats,
   métadonnées et le drapeau *embed metadata* (`RENDER_SETTINGS & 512`). Le dither,
   la normalisation, le rééchantillonnage, etc. restent ceux de l'utilisateur. Le
   mode « source » est forcé sur *master mix* (`RENDER_SETTINGS & 3 == 0`, sans
-  matrice ni stems).
+  matrice ni stems). « Ajouter les fichiers rendus au projet »
+  (`RENDER_ADDTOPROJ & 1`) est désactivé pendant l'export.
 
 ### 6.2 Déroulé
 
@@ -197,15 +201,16 @@ ProjExtState (EP, morceaux) ────┘                  │
    avant le rendu du morceau concerné, pour que REAPER n'ouvre pas sa propre
    boîte de dialogue d'écrasement. Si non, l'export est annulé.
 3. **Rendu** (`renderer`) :
-   1. Sauvegarde de l'état complet : `RENDER_SETTINGS`, `RENDER_BOUNDSFLAG`,
+   1. Sauvegarde de l'état complet : `RENDER_SETTINGS`, `RENDER_ADDTOPROJ`,
+      `RENDER_SRATE`, `RENDER_BOUNDSFLAG`,
       `RENDER_STARTPOS`, `RENDER_ENDPOS`, `RENDER_TAILFLAG`, `RENDER_FILE`,
       `RENDER_PATTERN`, `RENDER_FORMAT`, `RENDER_FORMAT2`, et toutes les entrées
       `RENDER_METADATA` existantes.
    2. Pour chaque région incluse, dans l'ordre :
       - `RENDER_BOUNDSFLAG = 0`, `RENDER_STARTPOS`/`RENDER_ENDPOS` = bornes de la
         région, `RENDER_TAILFLAG = 0` ;
-      - `RENDER_FILE` = dossier, `RENDER_PATTERN` = nom calculé (sans extension,
-        caractères `$` échappés pour ne pas être interprétés comme wildcards) ;
+      - `RENDER_FILE` = dossier, `RENDER_PATTERN` = nom calculé (sans extension ;
+        `$` a déjà été remplacé, cf. §6.1) ;
       - `RENDER_FORMAT` / `RENDER_FORMAT2` selon les réglages ;
       - effacement puis écriture des métadonnées du morceau ;
       - `Main_OnCommand(42230, 0)` (*Render project, using the most recent render
@@ -265,6 +270,10 @@ Disposition validée (option A de la maquette) :
    bouton principal « Exporter l'EP (N) ».
 
 Thème : celui de ReaImGui par défaut (sombre), sans personnalisation lourde en v1.
+
+Langue de l'interface : **anglais**, puisque l'outil est destiné à la communauté
+REAPER internationale. La maquette validée était en français, mais seule sa
+disposition a été retenue.
 
 ## 10. Tests
 
