@@ -3,18 +3,18 @@
 Empirical findings that `release_exporter` depends on. Fill in by running
 `tools/probe_api.lua` and `tools/inspect_render_state.lua` in REAPER (plan Task 2).
 
-**Status: probes and end-to-end render done (REAPER 7.80, macOS arm64). Pending: FLAC cover key, render presets.** Until then, the code uses the plan's hypotheses:
+**Status: probes and end-to-end renders done (REAPER 7.80, macOS arm64). Pending: MP3 320 and FLAC 24-bit presets.** Until then, the code uses the plan's hypotheses:
 
 | Topic | Hypothesis used in code | Confirmed |
 |---|---|---|
 | Metadata identifiers | Table in spec §4 — confirmed by exiftool on real renders; year moved to `ID3:TDRC`, Vorbis label written as `ORGANIZATION` + `LABEL` | ☑ |
-| Cover keys | `ID3:APIC_FILE` + `APIC_TYPE=3` → embedded in MP3 and in the WAV ID3 chunk; **not in FLAC** (no PICTURE block) | ◐ |
+| Cover keys | `ID3:APIC_FILE`/`APIC_TYPE=3` (MP3, WAV ID3 chunk) + `FLACPIC:APIC_FILE`/`APIC_TYPE=3` (FLAC PICTURE block, verified) | ☑ |
 | Clearing a metadata entry | `RENDER_METADATA` set with `"<id>|"` removes it | ☑ |
 | Values containing `|` | Kept intact after the first separator | ☑ |
 | `MARKER_GUID:<enum idx>` | Returns `{GUID}` for regions | ☑ |
 | `EnumProjExtState` key case | Keys come back **upper-cased** (`TRACK:{ABC}`); handled | ☑ |
 | `RENDER_TARGETS` | Honors bounds, `RENDER_FILE`, `RENDER_PATTERN`, `RENDER_FORMAT2`; **empty when bounds are zero-length** | ☑ |
-| Render presets | 4-character defaults (`evaw`, `l3pm`, `calf`) | ☐ |
+| Render presets | wav24 captured, wav16 derived — both verified by render; `l3pm` = 128 kbps, `calf` = 16-bit → recapture | ◐ |
 
 ## Environment
 - REAPER version: 7.80
@@ -45,10 +45,12 @@ PASS RecursiveCreateDirectory (existing) returned 0   <- 0 even on success; ensu
 ## Render presets
 | Preset | RENDER_FORMAT / RENDER_FORMAT2 |
 |---|---|
-| wav24 | |
-| wav16 | |
-| mp3_320 | |
-| flac | |
+| wav24 | `ZXZhdxgAAQ==` (`evaw` + `18 00 01`) — render verified 24-bit |
+| wav16 | `ZXZhdxAAAQ==` (derived, `10 00 01`) — render verified 16-bit |
+| mp3_320 | not captured yet. `bDNwbYAAAAAAAAAAAgAAAP////8EAAAAgAAAAAAAAAA=` renders **128 kbps** (0x80 = 128?) |
+| flac | not captured yet (default `calf` renders 16-bit) |
+
+Next capture: set MP3 CBR 320 (then FLAC 24-bit) as the **primary** format, *Save settings*, read `RENDER_FORMAT`.
 
 ## End-to-end render (`tools/probe_render_e2e.lua`, inspected with `exiftool -G1 -a`)
 REAPER accepts (keeps) every identifier it is given, so acceptance proves nothing; only the rendered files count.
