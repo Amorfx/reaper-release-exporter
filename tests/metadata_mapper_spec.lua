@@ -32,9 +32,14 @@ describe("metadata_mapper.build", function()
       "ID3:TRCK|1/4", "VORBIS:TRACKNUMBER|1", "VORBIS:TRACKTOTAL|4", "INFO:ITRK|1",
       "ID3:TSRC|FRXXX2600001", "VORBIS:ISRC|FRXXX2600001", "VORBIS:ORGANIZATION|Indie",
       "ID3:TCOM|C. D.", "ID3:APIC_TYPE|3",
+      "ID3:TDRC|2026", "VORBIS:DATE|2026", "VORBIS:LABEL|Indie", "ID3:TPUB|Indie",
     }) do
       assert.is_true(set[expected] == true, expected)
     end
+  end)
+
+  it("writes the year as ID3v2.4 TDRC only, since REAPER writes ID3v2.4 tags", function()
+    assert.is_false(has_prefix(mapper.build(track()), "ID3:TYER"))
   end)
 
   it("uses every configured cover key", function()

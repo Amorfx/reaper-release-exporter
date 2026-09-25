@@ -1,6 +1,6 @@
 -- Pure: turns a resolved track (see model.resolve) into REAPER RENDER_METADATA entries.
 -- Every scheme is written explicitly so we never rely on REAPER's implicit cross-scheme mapping.
--- Identifiers are confirmed in docs/reaper-api-notes.md.
+-- Identifiers are confirmed by a real render inspected with exiftool (docs/reaper-api-notes.md).
 local M = {}
 
 M.SCHEMES = { "ID3", "VORBIS", "INFO" }
@@ -10,9 +10,10 @@ M.FIELDS = {
   { key = "artist", ID3 = "TPE1", VORBIS = "ARTIST", INFO = "IART" },
   { key = "album_artist", ID3 = "TPE2", VORBIS = "ALBUMARTIST" },
   { key = "album", ID3 = "TALB", VORBIS = "ALBUM", INFO = "IPRD" },
-  { key = "year", ID3 = "TYER", VORBIS = "DATE", INFO = "ICRD" },
+  { key = "year", ID3 = "TDRC", VORBIS = "DATE", INFO = "ICRD" }, -- REAPER writes ID3v2.4, where TYER is obsolete
   { key = "genre", ID3 = "TCON", VORBIS = "GENRE", INFO = "IGNR" },
   { key = "label", ID3 = "TPUB", VORBIS = "ORGANIZATION" },
+  { key = "label", VORBIS = "LABEL" }, -- players read either ORGANIZATION or LABEL
   { key = "copyright", ID3 = "TCOP", VORBIS = "COPYRIGHT", INFO = "ICOP" },
   { key = "isrc", ID3 = "TSRC", VORBIS = "ISRC" },
   { key = "composer", ID3 = "TCOM", VORBIS = "COMPOSER" },

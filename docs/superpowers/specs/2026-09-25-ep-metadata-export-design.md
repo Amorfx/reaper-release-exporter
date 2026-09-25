@@ -74,10 +74,10 @@ correspondances implicites de REAPER entre schémas.
 | Artiste (morceau, avec repli) | `TPE1` | `ARTIST` | `IART` |
 | Artiste de l'album | `TPE2` | `ALBUMARTIST` | — |
 | Titre de l'EP | `TALB` | `ALBUM` | `IPRD` |
-| Année / date | `TYER` | `DATE` | `ICRD` |
+| Année / date | `TDRC` (REAPER écrit de l'ID3v2.4) | `DATE` | `ICRD` |
 | Genre | `TCON` | `GENRE` | `IGNR` |
 | Numéro | `TRCK` (`n/total`) | `TRACKNUMBER` + `TRACKTOTAL` | `ITRK` |
-| Label | `TPUB` | `ORGANIZATION` | — |
+| Label | `TPUB` | `ORGANIZATION` + `LABEL` | — |
 | Copyright | `TCOP` | `COPYRIGHT` | `ICOP` |
 | ISRC | `TSRC` | `ISRC` | — |
 | Compositeur | `TCOM` | `COMPOSER` | — |

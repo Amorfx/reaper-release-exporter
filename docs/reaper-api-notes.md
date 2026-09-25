@@ -3,12 +3,12 @@
 Empirical findings that `release_exporter` depends on. Fill in by running
 `tools/probe_api.lua` and `tools/inspect_render_state.lua` in REAPER (plan Task 2).
 
-**Status: probes done (REAPER 7.80, macOS arm64); metadata identifiers and render presets still to capture.** Until then, the code uses the plan's hypotheses:
+**Status: probes and end-to-end render done (REAPER 7.80, macOS arm64). Pending: FLAC cover key, render presets.** Until then, the code uses the plan's hypotheses:
 
 | Topic | Hypothesis used in code | Confirmed |
 |---|---|---|
-| Metadata identifiers | Table in spec §4 (`ID3:TYER`, `VORBIS:*`, `INFO:*`) | ☐ |
-| Cover keys | `ID3:APIC_FILE` + `ID3:APIC_TYPE=3` for every format | ☐ |
+| Metadata identifiers | Table in spec §4 — confirmed by exiftool on real renders; year moved to `ID3:TDRC`, Vorbis label written as `ORGANIZATION` + `LABEL` | ☑ |
+| Cover keys | `ID3:APIC_FILE` + `APIC_TYPE=3` → embedded in MP3 and in the WAV ID3 chunk; **not in FLAC** (no PICTURE block) | ◐ |
 | Clearing a metadata entry | `RENDER_METADATA` set with `"<id>|"` removes it | ☑ |
 | Values containing `|` | Kept intact after the first separator | ☑ |
 | `MARKER_GUID:<enum idx>` | Returns `{GUID}` for regions | ☑ |
@@ -49,3 +49,11 @@ PASS RecursiveCreateDirectory (existing) returned 0   <- 0 even on success; ensu
 | wav16 | |
 | mp3_320 | |
 | flac | |
+
+## End-to-end render (`tools/probe_render_e2e.lua`, inspected with `exiftool -G1 -a`)
+REAPER accepts (keeps) every identifier it is given, so acceptance proves nothing; only the rendered files count.
+- **MP3**: ID3v2.4 with Title, Artist, Band (TPE2), Album, Genre, Copyright, Composer, Publisher (TPUB),
+  Track `2/5`, ISRC, RecordingTime (TDRC), Front Cover picture. `ID3:TYER` produced a *separate* ID3v2.3 tag → replaced by TDRC.
+- **WAV**: RIFF INFO (INAM, IART, IPRD, ICRD, IGNR, ICOP, ITRK) + the same ID3v2.4 chunk as the MP3, cover included.
+- **FLAC**: every Vorbis comment present (TITLE, ARTIST, ALBUMARTIST, ALBUM, DATE, GENRE, ORGANIZATION, LABEL,
+  COPYRIGHT, ISRC, COMPOSER, TRACKNUMBER, TRACKTOTAL, TOTALTRACKS) but **no picture block**.
