@@ -14,6 +14,12 @@ _Dernière mise à jour : 2026-09-27_
 1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER 7.80 (interface réelle).
    Validés : sans ReaImGui (message clair), aspect visuel (maquette C), lot 1 (création des régions, fiche,
    pochette JPEG et PNG, renommage et annulation, synchro avec REAPER, ISRC invalide, morceau exclu, persistance).
+   Export WAV 24 + MP3 réel vérifié à l'exiftool (tags ID3/RIFF, 320 kbps, 24 bits, pochette PNG identique).
+   Considérés comme couverts par les tests automatiques et le rendu de bout en bout (non refaits à la main) :
+   réglages de rendu restaurés, FLAC, projet non enregistré, caractères interdits, Save / Save As,
+   saisie en cours lors d'un changement d'onglet, fichier verrouillé.
+   Restent à faire à la main : annulation d'un rendu, long export (8 morceaux), autre projet dans le même onglet,
+   changement d'onglet.
 2. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
 
 ## Points mineurs reportés (relecture)
