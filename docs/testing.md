@@ -1,6 +1,6 @@
 # Manual test checklist
 
-Run on REAPER 7.0 (oldest supported) and on the latest REAPER, with ReaImGui ≥ 0.9.
+Run on REAPER 7.80 (the only supported and tested version), with ReaImGui ≥ 0.9.
 
 ## Setup
 1. Symlink the repo into REAPER's Scripts folder (*Options > Show REAPER resource path*):

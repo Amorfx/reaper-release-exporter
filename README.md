@@ -3,7 +3,7 @@
 Fill your EP's metadata in one window and export every song as WAV + MP3/FLAC with proper tags (title, artist, album, track number, ISRC, composer, cover art) in one click.
 
 ## Requirements
-- REAPER 7.0 or newer
+- REAPER 7.80 or newer. It is only tested on REAPER 7.80 (macOS); older 7.x releases may work but are not supported.
 - ReaImGui 0.9 or newer (Extensions > ReaPack > Browse packages > "ReaImGui")
 
 ## Install
