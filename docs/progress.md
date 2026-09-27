@@ -1,6 +1,6 @@
 # Avancement — Release Exporter
 
-_Dernière mise à jour : 2026-09-25_
+_Dernière mise à jour : 2026-09-27_
 
 ## Fait
 - Spec et plan : `docs/superpowers/specs/2026-09-25-ep-metadata-export-design.md`, `docs/superpowers/plans/2026-09-25-release-exporter.md`.
@@ -8,13 +8,11 @@ _Dernière mise à jour : 2026-09-25_
 - Relecture complète par un relecteur indépendant : 2 critiques et 6 importants corrigés, avec tests.
 - Vérifications REAPER 7.80 (`docs/reaper-api-notes.md`) : GUID des régions, casse des clés ExtState, `RENDER_TARGETS`,
   identifiants de tags confirmés par exiftool sur de vrais rendus (MP3, WAV, FLAC), pochette MP3/WAV/FLAC.
+- Presets de rendu capturés et vérifiés par rendu : WAV 24/16 bits, MP3 CBR 320 kbps, FLAC 24 bits.
 
 ## Reste à faire
-1. **Capturer les presets MP3 320 CBR et FLAC 24 bits.** Les mettre en format *principal*, cliquer sur *Save settings*,
-   lancer `tools/inspect_render_state.lua` et relever `RENDER_FORMAT`. Les copier dans
-   `Rendering/release_exporter/formats.lua`, puis relancer `tools/probe_render_e2e.lua` et vérifier avec exiftool.
-2. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER (interface réelle).
-3. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
+1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER (interface réelle).
+2. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
 
 ## Points mineurs reportés (relecture)
 - Les jobs et l'existence de la pochette sont recalculés à chaque image (à déplacer dans `rebuild`).

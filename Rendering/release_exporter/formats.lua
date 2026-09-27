@@ -8,8 +8,8 @@ M.PRIMARY = {
 }
 
 M.SECONDARY = {
-  mp3_320 = "l3pm", -- TODO(capture): default is 128 kbps; the first capture also rendered 128 kbps
-  flac = "calf",    -- TODO(capture): default is 16-bit; 24-bit config still to capture
+  mp3_320 = "bDNwbUABAAAAAAAAAgAAAP////8EAAAAQAEAAAAAAAA=", -- captured on REAPER 7.80: "l3pm", CBR, 0x140 (320 kbps)
+  flac = "Y2FsZhgAAAAFAAAA",                                -- captured on REAPER 7.80: "calf" + 0x18 (24-bit), level 5
   none = "",
 }
 

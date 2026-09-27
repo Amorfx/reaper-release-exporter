@@ -3,7 +3,7 @@
 Empirical findings that `release_exporter` depends on. Fill in by running
 `tools/probe_api.lua` and `tools/inspect_render_state.lua` in REAPER (plan Task 2).
 
-**Status: probes and end-to-end renders done (REAPER 7.80, macOS arm64). Pending: MP3 320 and FLAC 24-bit presets.** Until then, the code uses the plan's hypotheses:
+**Status: probes and end-to-end renders done (REAPER 7.80, macOS arm64). All presets verified by render.** Until then, the code uses the plan's hypotheses:
 
 | Topic | Hypothesis used in code | Confirmed |
 |---|---|---|
@@ -14,7 +14,7 @@ Empirical findings that `release_exporter` depends on. Fill in by running
 | `MARKER_GUID:<enum idx>` | Returns `{GUID}` for regions | ☑ |
 | `EnumProjExtState` key case | Keys come back **upper-cased** (`TRACK:{ABC}`); handled | ☑ |
 | `RENDER_TARGETS` | Honors bounds, `RENDER_FILE`, `RENDER_PATTERN`, `RENDER_FORMAT2`; **empty when bounds are zero-length** | ☑ |
-| Render presets | wav24 captured, wav16 derived — both verified by render; `l3pm` = 128 kbps, `calf` = 16-bit → recapture | ◐ |
+| Render presets | wav24 captured, wav16 derived — both verified by render; mp3_320 and flac captured from `RENDER_FORMAT2` — render verified (320 kbps, 24-bit) | ☑ |
 
 ## Environment
 - REAPER version: 7.80
@@ -47,10 +47,10 @@ PASS RecursiveCreateDirectory (existing) returned 0   <- 0 even on success; ensu
 |---|---|
 | wav24 | `ZXZhdxgAAQ==` (`evaw` + `18 00 01`) — render verified 24-bit |
 | wav16 | `ZXZhdxAAAQ==` (derived, `10 00 01`) — render verified 16-bit |
-| mp3_320 | not captured yet. `bDNwbYAAAAAAAAAAAgAAAP////8EAAAAgAAAAAAAAAA=` renders **128 kbps** (0x80 = 128?) |
-| flac | not captured yet (default `calf` renders 16-bit) |
+| mp3_320 | `bDNwbUABAAAAAAAAAgAAAP////8EAAAAQAEAAAAAAAA=` (`l3pm`, bitrate `0x140` = 320 at offsets 4 and 24) — captured as secondary, render verified 320 kbps. The earlier `...gAAAA...` blob was the 128 kbps secondary (`0x80`) |
+| flac | `Y2FsZhgAAAAFAAAA` (`calf` + `0x18` = 24-bit, compression level 5) — captured as secondary, render verified 24-bit |
 
-Next capture: set MP3 CBR 320 (then FLAC 24-bit) as the **primary** format, *Save settings*, read `RENDER_FORMAT`.
+Capture from `RENDER_FORMAT2`: the exporter always renders MP3/FLAC as the secondary format.
 
 ## End-to-end render (`tools/probe_render_e2e.lua`, inspected with `exiftool -G1 -a`)
 REAPER accepts (keeps) every identifier it is given, so acceptance proves nothing; only the rendered files count.
