@@ -18,18 +18,19 @@ Empirical findings that `release_exporter` depends on, checked on REAPER 7.80 (m
 - REAPER version: 7.80
 - OS: macOS arm64
 
-## Probe output (`tools/probe_api.lua`)
+## Probe output (`tools/probe_api.lua`, 2026-09-28)
 ```
 PASS metadata value with separators A|B; C
 PASS clearing removes the id from the list
-PASS MARKER_GUID returns a GUID {6B622AC0-AC13-6743-95A7-439D756E8D6A}
-PASS EnumProjExtState key case returned key = TRACK:{ABC}
-FAIL RENDER_TARGETS uses the pattern          <- bounds were 0..0, see below
-PASS RecursiveCreateDirectory (new)
-PASS RecursiveCreateDirectory (existing) returned 0   <- 0 even on success; ensure_dir ignores it
+PASS MARKER_GUID returns a GUID {4B2DECB4-EEBD-6C46-A6E8-1152B4142D5A}
+PASS EnumProjExtState upper-cases keys TRACK:{ABC}
+PASS RENDER_TARGETS is empty for zero-length bounds
+PASS RENDER_TARGETS lists both formats .../ReleaseExporterProbe/probe-name.wav;.../probe-name.mp3
+PASS RecursiveCreateDirectory on an existing folder returned 0   <- 0 even on success; ensure_dir ignores it
+PASS REAPER 7.80/macOS-arm64
 ```
 
-## RENDER_TARGETS (`tools/probe_render_targets.lua`)
+## RENDER_TARGETS (`tools/probe_api.lua`, step 4)
 ```
 0. current settings              (empty)            <- custom bounds 0..0
 1. custom bounds 0..5 s          .../reaper-test/probe-name.wav
