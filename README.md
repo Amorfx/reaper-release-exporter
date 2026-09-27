@@ -235,4 +235,4 @@ ln -s "$PWD" "<resource path>/Scripts/reaper-release-plugin"
 
 ## License
 
-[MIT](LICENSE) © Clément Decou
+[MIT](LICENSE) © Clément Décou

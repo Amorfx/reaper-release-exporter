@@ -1,5 +1,5 @@
 -- @description Release Exporter: tag a single, EP or album and export every song in one click
--- @author Clément Decou
+-- @author Clément Décou
 -- @link https://github.com/Amorfx/reaper-release-plugin
 -- @version 0.1.0
 -- @about
