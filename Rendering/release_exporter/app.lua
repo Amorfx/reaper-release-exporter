@@ -17,6 +17,18 @@ function App.new(r)
   return self
 end
 
+-- Deep equality for the plain tables loaded from the project.
+local function same(a, b)
+  if type(a) ~= "table" or type(b) ~= "table" then return a == b end
+  for k, v in pairs(a) do
+    if not same(v, b[k]) then return false end
+  end
+  for k in pairs(b) do
+    if a[k] == nil then return false end
+  end
+  return true
+end
+
 function App:refresh(force)
   local proj, projfn = self.r.EnumProjects(-1)
   local count = self.r.GetProjectStateChangeCount(proj)
@@ -24,8 +36,10 @@ function App:refresh(force)
   -- A Save As only changes the path; reloading is harmless because every edit is already stored.
   local switched = proj ~= self.proj or (projfn or "") ~= self.projfn
   if not force and not switched and count == self.change_count then return false end
-  if force or switched then
-    local data = store.load(self.r, proj)
+  -- Reopening the same file in the same tab (File > Revert) keeps both the pointer and the path, so the stored
+  -- data is re-read on every state change. Only a real difference drops the open drafts.
+  local data = store.load(self.r, proj)
+  if force or switched or not same(data, { ep = self.ep, tracks = self.tracks, settings = self.settings }) then
     self.ep, self.tracks, self.settings = data.ep, data.tracks, data.settings
     self.generation = self.generation + 1
   end

@@ -133,6 +133,27 @@ describe("app", function()
     assert.are.equal("", app.ep.artist)
   end)
 
+  it("reloads when the same file is reopened in the same tab (File > Revert)", function()
+    local r, app = setup()
+    fill_ep(app)
+    local generation = app.generation
+    -- Same pointer, same path: only the project state changes.
+    r.SetProjExtState(r.proj, "ReleaseExporter", "ep", '{"artist":"Saved","album":"Nuits","year":"2026"}')
+    r.change_count = r.change_count + 1
+    app:refresh()
+    assert.are.equal("Saved", app.ep.artist)
+    assert.is_true(app.generation > generation)
+  end)
+
+  it("keeps open drafts when a change only echoes its own edits", function()
+    local r, app = setup()
+    fill_ep(app)
+    local generation = app.generation
+    r.change_count = r.change_count + 1
+    app:refresh()
+    assert.are.equal(generation, app.generation)
+  end)
+
   it("follows the new path after Save As", function()
     local r, app = setup()
     fill_ep(app)
