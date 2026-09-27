@@ -1,5 +1,5 @@
 -- @noindex
--- Pure data model: EP and track fields, fallbacks, numbering, validation and file names.
+-- Pure data model: release ("ep" in the code and the saved data) and track fields, fallbacks, numbering, validation and file names.
 -- Must never reference the `reaper` API so it stays testable outside REAPER.
 local M = {}
 
@@ -111,7 +111,7 @@ end
 
 function M.default_output_dir(project_dir, album)
   if M.blank(project_dir) then return "" end
-  local folder = M.blank(album) and "EP" or M.sanitize_filename(album)
+  local folder = M.blank(album) and "Release" or M.sanitize_filename(album)
   return project_dir .. "/Exports/" .. folder
 end
 
@@ -140,7 +140,7 @@ function M.validate(ep, rows, settings, output_dir, opts)
   local function warn(field, message, guid) warnings[#warnings + 1] = { field = field, message = message, guid = guid } end
 
   if M.blank(ep.artist) then err("ep.artist", "Artist is required.") end
-  if M.blank(ep.album) then err("ep.album", "EP title is required.") end
+  if M.blank(ep.album) then err("ep.album", "Release title is required.") end
   if not M.is_valid_year(trim(ep.year)) then err("ep.year", "Release date must be YYYY or YYYY-MM-DD.") end
   if M.blank(ep.cover) then
     warn("ep.cover", "No cover image.")

@@ -1,6 +1,6 @@
 # Release Exporter for REAPER
 
-Fill your EP's metadata in one window and export every song as WAV + MP3/FLAC with proper tags (title, artist, album, track number, ISRC, composer, cover art) in one click.
+Fill your release's metadata (single, EP or album) in one window and export every song as WAV + MP3/FLAC with proper tags (title, artist, album, track number, ISRC, composer, cover art) in one click.
 
 ## Requirements
 - REAPER 7.80 or newer. It is only tested on REAPER 7.80 (macOS); older 7.x releases may work but are not supported.
@@ -13,10 +13,10 @@ Fill your EP's metadata in one window and export every song as WAV + MP3/FLAC wi
 4. Run the action "Script: Release Exporter.lua"
 
 ## Workflow
-1. Put the songs of your EP in one project: rendered mixes or subprojects, in order.
+1. Put the songs of your release in one project: rendered mixes or subprojects, in order.
 2. One region per song. No regions yet? Select the items and click "Create one region per selected item".
-3. Fill the EP card (artist, title, release date, cover…) and the songs table (title = region name, ISRC…).
-4. Click "Export EP". Files land in `<project folder>/Exports/<EP title>` unless you pick another folder.
+3. Fill the release card (artist, title, release date, cover…) and the songs table (title = region name, ISRC…).
+4. Click "Export". Files land in `<project folder>/Exports/<Release title>` unless you pick another folder.
 
 ## Good to know
 - Metadata is saved inside the `.rpp` (save the project to keep it).

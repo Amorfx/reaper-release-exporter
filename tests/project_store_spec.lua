@@ -11,7 +11,7 @@ describe("project_store", function()
     assert.are.same({}, data.tracks)
   end)
 
-  it("round-trips EP, tracks and settings and marks the project dirty", function()
+  it("round-trips the release, tracks and settings and marks the project dirty", function()
     local r = fake.new()
     local ep = model.new_ep()
     ep.artist = "Clem"

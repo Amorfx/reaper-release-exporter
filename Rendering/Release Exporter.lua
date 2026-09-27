@@ -1,9 +1,9 @@
--- @description Release Exporter: fill EP metadata and export every song in one click
+-- @description Release Exporter: tag a single, EP or album and export every song in one click
 -- @author Clément Decou
 -- @link https://github.com/Amorfx/reaper-release-plugin
 -- @version 0.1.0
 -- @about
---   Fill EP-level and per-song metadata (title, artist, ISRC, composer, cover...) in one window,
+--   Fill release-level and per-song metadata (title, artist, ISRC, composer, cover...) in one window,
 --   then render every region of the project as WAV + MP3/FLAC with embedded tags.
 --   Requires ReaImGui (ReaTeam Extensions).
 -- @provides

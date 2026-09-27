@@ -1,5 +1,5 @@
 -- @noindex
--- EP card: cover (click to choose, or drop a file) and the EP-level fields.
+-- Release card: cover (click to choose, or drop a file) and the release-level fields.
 local model = require("release_exporter.model")
 local theme = require("release_exporter.ui.theme")
 local widgets = require("release_exporter.ui.widgets")
@@ -81,7 +81,7 @@ end
 
 -- Fields laid out on a 6-column grid: each row is a list of { label, key, span, hint }.
 local ROWS = {
-  { { "Artist", "artist", 2 }, { "EP title", "album", 3 }, { "Release date", "year", 1, "YYYY or YYYY-MM-DD" } },
+  { { "Artist", "artist", 2 }, { "Release title", "album", 3 }, { "Release date", "year", 1, "YYYY or YYYY-MM-DD" } },
   { { "Album artist", "album_artist", 2, "Same as artist" }, { "Genre", "genre", 1 }, { "Label", "label", 1 },
     { "Copyright", "copyright", 2, "(P) 2026 Name" } },
 }

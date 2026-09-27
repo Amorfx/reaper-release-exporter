@@ -52,7 +52,7 @@ describe("model.build_rows", function()
 end)
 
 describe("model.resolve", function()
-  it("falls back to the EP artist for track and album artist", function()
+  it("falls back to the release artist for track and album artist", function()
     local t = model.resolve(make_ep(), { title = "Intro", artist = "", isrc = "", composer = "", number = 1, total = 3 })
     assert.are.equal("Clem", t.artist)
     assert.are.equal("Clem", t.album_artist)
@@ -101,7 +101,7 @@ describe("model file names", function()
 
   it("builds the default output folder next to the project", function()
     assert.are.equal("/music/ep/Exports/Nuits- Blanches", model.default_output_dir("/music/ep", "Nuits: Blanches"))
-    assert.are.equal("/music/ep/Exports/EP", model.default_output_dir("/music/ep", ""))
+    assert.are.equal("/music/ep/Exports/Release", model.default_output_dir("/music/ep", ""))
     assert.are.equal("", model.default_output_dir("", "Nuits"))
   end)
 end)
@@ -126,11 +126,17 @@ end)
 describe("model.validate", function()
   local settings = model.default_settings()
 
-  it("passes a complete EP", function()
+  it("passes a complete release", function()
     local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "FRXXX2600001" } }), settings, "/out",
       { file_exists = always })
     assert.are.same({}, v.errors)
     assert.are.same({}, v.warnings)
+  end)
+
+  it("names the release title in its error", function()
+    local v = model.validate(make_ep({ album = " " }), make_rows({ { "{A}", "Intro", "FRXXX2600001" } }), settings,
+      "/out", { file_exists = always })
+    assert.are.same({ "Release title is required." }, { v.errors[1].message })
   end)
 
   it("blocks an unsaved project without output folder", function()
@@ -140,7 +146,7 @@ describe("model.validate", function()
     assert.are.equal("settings.output_dir", v.errors[1].field)
   end)
 
-  it("reports missing EP fields, bad ISRC and empty titles", function()
+  it("reports missing release fields, bad ISRC and empty titles", function()
     local v = model.validate(make_ep({ artist = "", year = "26" }), make_rows({ { "{A}", "", "BAD" } }), settings,
       "/out", { file_exists = always })
     local keys = {}

@@ -1,5 +1,5 @@
 -- @noindex
--- Main window layout: EP card, songs table, export bar.
+-- Main window layout: release card, songs table, export bar.
 local ep_panel = require("release_exporter.ui.ep_panel")
 local tracks_table = require("release_exporter.ui.tracks_table")
 local export_bar = require("release_exporter.ui.export_bar")
