@@ -1,11 +1,9 @@
 # REAPER API notes
 
-Empirical findings that `release_exporter` depends on. Fill in by running
-`tools/probe_api.lua` and `tools/inspect_render_state.lua` in REAPER (plan Task 2).
+Empirical findings that `release_exporter` depends on, checked on REAPER 7.80 (macOS arm64) with the probes in
+`tools/` and real renders inspected with exiftool. Re-run them when supporting a new REAPER version.
 
-**Status: probes and end-to-end renders done (REAPER 7.80, macOS arm64). All presets verified by render.** Until then, the code uses the plan's hypotheses:
-
-| Topic | Hypothesis used in code | Confirmed |
+| Topic | Behaviour the code relies on | Confirmed |
 |---|---|---|
 | Metadata identifiers | Table in spec §4 — confirmed by exiftool on real renders; year moved to `ID3:TDRC`, Vorbis label written as `ORGANIZATION` + `LABEL` | ☑ |
 | Cover keys | `ID3:APIC_FILE`/`APIC_TYPE=3` (MP3, WAV ID3 chunk) + `FLACPIC:APIC_FILE`/`APIC_TYPE=3` (FLAC PICTURE block, verified) | ☑ |
@@ -40,9 +38,7 @@ PASS RecursiveCreateDirectory (existing) returned 0   <- 0 even on success; ensu
 6. + master mix only             (unchanged)
 ```
 
-## RENDER_METADATA dump (`tools/inspect_render_state.lua`)
-
-## Render presets
+## Render presets (`tools/inspect_render_state.lua`)
 | Preset | RENDER_FORMAT / RENDER_FORMAT2 |
 |---|---|
 | wav24 | `ZXZhdxgAAQ==` (`evaw` + `18 00 01`) — render verified 24-bit |
@@ -58,4 +54,5 @@ REAPER accepts (keeps) every identifier it is given, so acceptance proves nothin
   Track `2/5`, ISRC, RecordingTime (TDRC), Front Cover picture. `ID3:TYER` produced a *separate* ID3v2.3 tag → replaced by TDRC.
 - **WAV**: RIFF INFO (INAM, IART, IPRD, ICRD, IGNR, ICOP, ITRK) + the same ID3v2.4 chunk as the MP3, cover included.
 - **FLAC**: every Vorbis comment present (TITLE, ARTIST, ALBUMARTIST, ALBUM, DATE, GENRE, ORGANIZATION, LABEL,
-  COPYRIGHT, ISRC, COMPOSER, TRACKNUMBER, TRACKTOTAL, TOTALTRACKS) but **no picture block**.
+  COPYRIGHT, ISRC, COMPOSER, TRACKNUMBER, TRACKTOTAL, TOTALTRACKS). The cover needs its own `FLACPIC:APIC_FILE`
+  key: the `ID3:` one is ignored for FLAC. With it, the PICTURE block (front cover) is written.
