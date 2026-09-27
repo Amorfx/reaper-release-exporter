@@ -53,9 +53,14 @@ local function draw_empty(ImGui, ctx, app)
   end)
 end
 
+local CHECKBOX_PADDING = 3
+
 local function draw_include(ImGui, ctx, app, row)
   ImGui.TableNextColumn(ctx)
-  ImGui.AlignTextToFramePadding(ctx)
+  -- A smaller box than the text fields, centred on them.
+  local full = ImGui.GetFrameHeight(ctx)
+  ImGui.PushStyleVar(ctx, ImGui.StyleVar_FramePadding, CHECKBOX_PADDING, CHECKBOX_PADDING)
+  ImGui.SetCursorPosY(ctx, ImGui.GetCursorPosY(ctx) + (full - ImGui.GetFrameHeight(ctx)) / 2)
   -- A ticked box is filled with the accent, the check mark drawn on top of it.
   if row.include then
     ImGui.PushStyleColor(ctx, ImGui.Col_FrameBg, C.accent)
@@ -64,6 +69,7 @@ local function draw_include(ImGui, ctx, app, row)
   end
   local changed, include = ImGui.Checkbox(ctx, "##include", row.include)
   if row.include then ImGui.PopStyleColor(ctx, 3) end
+  ImGui.PopStyleVar(ctx)
   if changed then app:set_track_field(row.guid, "include", include) end
 end
 
@@ -87,6 +93,28 @@ local function draw_row(ImGui, ctx, app, row)
   ImGui.PopID(ctx)
 end
 
+-- Header labels line up with the text inside the cells: text fields are inset by their padding,
+-- the length is right-aligned.
+local HEADERS = { { "" }, { "#" }, { "Title", "inset" }, { "Artist", "inset" }, { "ISRC", "inset" },
+  { "Composer", "inset" }, { "Length", "right" } }
+
+local function draw_headers(ImGui, ctx)
+  ImGui.PushStyleColor(ctx, ImGui.Col_Text, C.muted)
+  ImGui.TableNextRow(ctx, ImGui.TableRowFlags_Headers)
+  local inset = ImGui.GetStyleVar(ctx, ImGui.StyleVar_FramePadding)
+  for i, h in ipairs(HEADERS) do
+    ImGui.TableSetColumnIndex(ctx, i - 1)
+    local x = ImGui.GetCursorPosX(ctx)
+    if h[2] == "inset" then
+      ImGui.SetCursorPosX(ctx, x + inset)
+    elseif h[2] == "right" then
+      ImGui.SetCursorPosX(ctx, x + ImGui.GetContentRegionAvail(ctx) - ImGui.CalcTextSize(ctx, h[1]))
+    end
+    ImGui.TableHeader(ctx, h[1])
+  end
+  ImGui.PopStyleColor(ctx)
+end
+
 local function draw_table(ImGui, ctx, app)
   local flags = ImGui.TableFlags_BordersInnerH | ImGui.TableFlags_ScrollY | ImGui.TableFlags_PadOuterX
   local _, height = ImGui.GetContentRegionAvail(ctx)
@@ -99,9 +127,7 @@ local function draw_table(ImGui, ctx, app)
   ImGui.TableSetupColumn(ctx, "ISRC", ImGui.TableColumnFlags_WidthStretch, 1.6)
   ImGui.TableSetupColumn(ctx, "Composer", ImGui.TableColumnFlags_WidthStretch, 2)
   ImGui.TableSetupColumn(ctx, "Length", ImGui.TableColumnFlags_WidthFixed, 52)
-  ImGui.PushStyleColor(ctx, ImGui.Col_Text, C.muted)
-  ImGui.TableHeadersRow(ctx)
-  ImGui.PopStyleColor(ctx)
+  draw_headers(ImGui, ctx)
   for _, row in ipairs(app.rows) do draw_row(ImGui, ctx, app, row) end
   ImGui.EndTable(ctx)
 end

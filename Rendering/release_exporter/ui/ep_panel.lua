@@ -30,14 +30,11 @@ local function cover_image(ImGui, ctx, path)
   return cover.image
 end
 
-local function field(ImGui, ctx, app, label, key, width, hint)
-  ImGui.BeginGroup(ctx)
-  widgets.label(ImGui, ctx, label)
+local function field(ImGui, ctx, app, key, width, hint)
   local value = widgets.text_field(ImGui, ctx, "##ep_" .. key, app.ep[key], {
     width = width, hint = hint, error = model.issue_for(app.validation.errors, nil, "ep." .. key),
   })
   if value then app:set_ep_field(key, value) end
-  ImGui.EndGroup(ctx)
 end
 
 -- Empty drop zone: dashed outline (accent while hovered), a "+" and a hint, centred.
@@ -89,14 +86,31 @@ local ROWS = {
     { "Copyright", "copyright", 2, "(P) 2026 Name" } },
 }
 
+-- Labels and inputs are drawn as two separate lines: mixing text and frames on one line would
+-- push the labels after the first column down to the frames' text baseline.
+-- Inside a group, SameLine's offset is measured from the group's left edge.
+local LABEL_GAP = 5
+
 local function draw_fields(ImGui, ctx, app)
   ImGui.BeginGroup(ctx)
   local gap = ImGui.GetStyleVar(ctx, ImGui.StyleVar_ItemSpacing)
   local column = (ImGui.GetContentRegionAvail(ctx) - gap * (GRID_COLUMNS - 1)) / GRID_COLUMNS
   for _, row in ipairs(ROWS) do
+    local cells, offset = {}, 0
     for i, f in ipairs(row) do
-      if i > 1 then ImGui.SameLine(ctx) end
-      field(ImGui, ctx, app, f[1], f[2], column * f[3] + gap * (f[3] - 1), f[4])
+      local width = column * f[3] + gap * (f[3] - 1)
+      cells[i] = { offset = offset, width = width }
+      offset = offset + width + gap
+    end
+    ImGui.PushStyleVar(ctx, ImGui.StyleVar_ItemSpacing, gap, LABEL_GAP)
+    for i, f in ipairs(row) do
+      if i > 1 then ImGui.SameLine(ctx, cells[i].offset) end
+      widgets.label(ImGui, ctx, f[1])
+    end
+    ImGui.PopStyleVar(ctx)
+    for i, f in ipairs(row) do
+      if i > 1 then ImGui.SameLine(ctx, cells[i].offset) end
+      field(ImGui, ctx, app, f[2], cells[i].width, f[4])
     end
   end
   ImGui.EndGroup(ctx)
