@@ -31,6 +31,20 @@ function M.ensure_dir(r, path)
   return true
 end
 
+-- Asks for a JPEG or PNG file. REAPER's own dialog only filters on one extension, so without
+-- js_ReaScriptAPI it shows every file and the model rejects other formats.
+-- Returns the chosen path, or nil when cancelled.
+function M.choose_image(r, title)
+  if r.JS_Dialog_BrowseForOpenFiles then
+    local rv, path = r.JS_Dialog_BrowseForOpenFiles(title, "", "", "Images (JPEG, PNG)\0*.jpg;*.jpeg;*.png\0\0", false)
+    if rv == 1 and path ~= "" then return path end
+    return nil
+  end
+  local ok, path = r.GetUserFileNameForRead("", title, "")
+  if ok and path ~= "" then return path end
+  return nil
+end
+
 function M.open_folder(r, path)
   if r.CF_ShellExecute then return r.CF_ShellExecute(path) end
   local os_name = r.GetOS()

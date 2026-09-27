@@ -1,5 +1,6 @@
 -- @noindex
 -- Release card: cover (click to choose, or drop a file) and the release-level fields.
+local fs = require("release_exporter.fs")
 local model = require("release_exporter.model")
 local theme = require("release_exporter.ui.theme")
 local widgets = require("release_exporter.ui.widgets")
@@ -64,8 +65,8 @@ local function draw_cover(ImGui, ctx, app)
     clicked = drop_zone(ImGui, ctx)
   end
   if clicked then
-    local ok, file = app.r.GetUserFileNameForRead("", "Choose cover image", "jpg")
-    if ok then app:set_ep_field("cover", file) end
+    local file = fs.choose_image(app.r, "Choose cover image")
+    if file then app:set_ep_field("cover", file) end
   end
   if ImGui.BeginDragDropTarget(ctx) then
     local ok, count = ImGui.AcceptDragDropPayloadFiles(ctx)

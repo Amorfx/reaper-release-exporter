@@ -180,6 +180,21 @@ describe("model.validate", function()
     assert.are.equal(1, #v.warnings)
   end)
 
+  it("accepts JPEG and PNG covers only", function()
+    assert.is_true(model.is_cover_format("/art/Cover.JPG"))
+    assert.is_true(model.is_cover_format("/art/cover.jpeg"))
+    assert.is_true(model.is_cover_format("/art/cover.png"))
+    assert.is_false(model.is_cover_format("/art/cover.webp"))
+    assert.is_false(model.is_cover_format("/art/png"))
+  end)
+
+  it("blocks a cover that is neither JPEG nor PNG", function()
+    local v = model.validate(make_ep({ cover = "/art/cover.webp" }), make_rows({ { "{A}", "Intro", "" } }), settings,
+      "/out", { file_exists = always })
+    assert.are.same({ "Cover must be a JPEG or PNG image." }, { v.errors[1].message })
+    assert.is_truthy(model.issue_for(v.errors, nil, "ep.cover"))
+  end)
+
   it("accepts an empty ISRC silently: distributors often assign it later", function()
     local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "" } }), settings, "/out",
       { file_exists = always })

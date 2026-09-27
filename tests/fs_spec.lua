@@ -14,3 +14,32 @@ describe("fs.ensure_dir", function()
     assert.is_false(fs.ensure_dir(fake.new(), "/dev/null/nope"))
   end)
 end)
+
+describe("fs.choose_image", function()
+  it("offers JPEG and PNG files when js_ReaScriptAPI is installed", function()
+    local r, filter = fake.new(), nil
+    r.JS_Dialog_BrowseForOpenFiles = function(_, _, _, extensions)
+      filter = extensions
+      return 1, "/art/cover.png"
+    end
+    assert.are.equal("/art/cover.png", fs.choose_image(r, "Choose cover image"))
+    assert.is_truthy(filter:find("*.png", 1, true))
+    assert.is_truthy(filter:find("*.jpg", 1, true))
+  end)
+
+  it("returns nil when the dialog is cancelled", function()
+    local r = fake.new()
+    r.JS_Dialog_BrowseForOpenFiles = function() return 0, "" end
+    assert.is_nil(fs.choose_image(r, "Choose cover image"))
+  end)
+
+  it("falls back to REAPER's dialog without an extension filter", function()
+    local r, ext = fake.new(), nil
+    r.GetUserFileNameForRead = function(_, _, defext)
+      ext = defext
+      return true, "/art/cover.png"
+    end
+    assert.are.equal("/art/cover.png", fs.choose_image(r, "Choose cover image"))
+    assert.are.equal("", ext)
+  end)
+end)

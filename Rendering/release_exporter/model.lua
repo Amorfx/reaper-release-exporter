@@ -133,6 +133,13 @@ function M.plan_outputs(ep, rows, settings, output_dir)
   return jobs
 end
 
+-- Covers are embedded as-is, so only formats every tag reader understands are accepted.
+function M.is_cover_format(path)
+  local ext = path:match("%.([^./\\]+)$")
+  ext = ext and ext:lower()
+  return ext == "jpg" or ext == "jpeg" or ext == "png"
+end
+
 function M.validate(ep, rows, settings, output_dir, opts)
   opts = opts or {}
   local errors, warnings = {}, {}
@@ -144,6 +151,8 @@ function M.validate(ep, rows, settings, output_dir, opts)
   if not M.is_valid_year(trim(ep.year)) then err("ep.year", "Release date must be YYYY or YYYY-MM-DD.") end
   if M.blank(ep.cover) then
     warn("ep.cover", "No cover image.")
+  elseif not M.is_cover_format(trim(ep.cover)) then
+    err("ep.cover", "Cover must be a JPEG or PNG image.")
   elseif opts.file_exists and not opts.file_exists(trim(ep.cover)) then
     warn("ep.cover", "Cover image not found; it will be skipped.")
   end

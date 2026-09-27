@@ -18,7 +18,6 @@ _Dernière mise à jour : 2026-09-27_
 ## Points mineurs reportés (relecture)
 - Les jobs et l'existence de la pochette sont recalculés à chaque image (à déplacer dans `rebuild`).
 - La vérification de la pochette utilise un chemin brut dans l'app et un chemin nettoyé dans la validation.
-- Le type d'image de la pochette déposée n'est pas vérifié.
 - Les noms réservés Windows et les noms trop longs ne sont pas nettoyés.
 - Les dossiers de sortie relatifs ou avec `~` ne sont pas refusés.
 - Un dossier impossible à créer n'est détecté qu'à l'export.
