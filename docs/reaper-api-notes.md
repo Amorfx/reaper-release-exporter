@@ -5,7 +5,7 @@ Empirical findings that `release_exporter` depends on, checked on REAPER 7.80 (m
 
 | Topic | Behaviour the code relies on | Confirmed |
 |---|---|---|
-| Metadata identifiers | Table in spec §4 — confirmed by exiftool on real renders; year moved to `ID3:TDRC`, Vorbis label written as `ORGANIZATION` + `LABEL` | ☑ |
+| Metadata identifiers | The tag table in the README — confirmed by exiftool on real renders; year moved to `ID3:TDRC`, Vorbis label written as `ORGANIZATION` + `LABEL` | ☑ |
 | Cover keys | `ID3:APIC_FILE`/`APIC_TYPE=3` (MP3, WAV ID3 chunk) + `FLACPIC:APIC_FILE`/`APIC_TYPE=3` (FLAC PICTURE block, verified) | ☑ |
 | Clearing a metadata entry | `RENDER_METADATA` set with `"<id>|"` removes it | ☑ |
 | Values containing `|` | Kept intact after the first separator | ☑ |

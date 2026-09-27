@@ -224,7 +224,7 @@ luacheck .      # lint
 | `Rendering/release_exporter/ui/` | ReaImGui views and theme |
 | `tests/` | busted specs and the fake REAPER API |
 | `tools/` | Probes used to check REAPER's behaviour (not shipped) |
-| `docs/` | Design, API notes and the manual test checklist |
+| `docs/` | REAPER API notes, the manual test checklist and the README screenshots |
 
 To try your changes in REAPER, link the repository into REAPER's `Scripts` folder
 (*Options > Show REAPER resource path*) and load `Rendering/Release Exporter.lua` from the *Actions* list:
