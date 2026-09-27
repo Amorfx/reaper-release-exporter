@@ -12,7 +12,8 @@ _Dernière mise à jour : 2026-09-27_
 
 ## Reste à faire
 1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER 7.80 (interface réelle).
-   Validés : sans ReaImGui (message clair), aspect visuel (maquette C).
+   Validés : sans ReaImGui (message clair), aspect visuel (maquette C), lot 1 (création des régions, fiche,
+   pochette JPEG et PNG, renommage et annulation, synchro avec REAPER, ISRC invalide, morceau exclu, persistance).
 2. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
 
 ## Points mineurs reportés (relecture)

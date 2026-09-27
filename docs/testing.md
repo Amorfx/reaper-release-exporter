@@ -19,8 +19,8 @@ Run on REAPER 7.80 (the only supported and tested version), with ReaImGui ≥ 0.
 - [ ] Untick one row → the numbering skips it, the row is dimmed and "Export 2 songs" is shown.
 - [ ] Save, close and reopen the project → every field is still there.
 - [ ] Set render dialog options first (e.g. region matrix bounds, a custom pattern, some metadata). Export WAV 24 + MP3 → the report says OK for 2 songs, and the render dialog options are unchanged afterwards.
-- [ ] `ffprobe -hide_banner "02 - <title>.mp3"` shows title, artist, album, track `2/2`, date, ISRC and an attached picture stream.
-- [ ] Switch to WAV 16 + FLAC, export again → the overwrite prompt lists 4 files. `ffprobe` on the FLAC shows the Vorbis tags and the picture.
+- [ ] `exiftool -G1 -a "02 - <title>.mp3"` shows title, artist, album, track `2/2`, date, ISRC and a front cover picture.
+- [ ] Switch to WAV 16 + FLAC, export again → the overwrite prompt lists 4 files. `exiftool -G1 -a` on the FLAC shows the Vorbis tags and the picture.
 - [ ] Unsaved new project with regions → the "Save the project or choose an output folder." error blocks Export.
 - [ ] A title with `AC/DC: Live?` → exported as `01 - AC-DC- Live-.wav`.
 - [ ] Open two project tabs with different data and switch between them → the window follows the active tab.
