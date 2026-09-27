@@ -30,14 +30,10 @@ PASS RecursiveCreateDirectory on an existing folder returned 0   <- 0 even on su
 PASS REAPER 7.80/macOS-arm64
 ```
 
-## RENDER_TARGETS (`tools/probe_api.lua`, step 4)
-```
-0. current settings              (empty)            <- custom bounds 0..0
-1. custom bounds 0..5 s          .../reaper-test/probe-name.wav
-2. + RENDER_FILE                 .../ReleaseExporterProbe/probe-name.wav
-5. + RENDER_FORMAT2 l3pm         .../probe-name.wav;.../probe-name.mp3
-6. + master mix only             (unchanged)
-```
+## RENDER_TARGETS
+Empty while the render bounds have zero length. Once bounds are set, it follows `RENDER_FILE`, `RENDER_PATTERN`
+and `RENDER_FORMAT2` (one path per format, separated by `;`), and switching the source to the master mix does not
+change it. The renderer sets the region bounds first, then reads it to know which files to delete and check.
 
 ## Render presets (`tools/inspect_render_state.lua`)
 | Preset | RENDER_FORMAT / RENDER_FORMAT2 |
