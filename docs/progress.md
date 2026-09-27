@@ -1,26 +1,22 @@
 # Avancement — Release Exporter
 
-_Dernière mise à jour : 2026-09-27_
+_Dernière mise à jour : 2026-09-28_
 
 ## Fait
 - Spec et plan : `docs/superpowers/specs/2026-09-25-ep-metadata-export-design.md`, `docs/superpowers/plans/2026-09-25-release-exporter.md`.
-- Tâches 1 à 9 du plan implémentées (branche `feat/release-exporter`), 73 tests unitaires verts, luacheck propre.
+- Tâches 1 à 9 du plan implémentées (branche `feat/release-exporter`), 89 tests unitaires verts, luacheck propre.
 - Relecture complète par un relecteur indépendant : 2 critiques et 6 importants corrigés, avec tests.
 - Vérifications REAPER 7.80 (`docs/reaper-api-notes.md`) : GUID des régions, casse des clés ExtState, `RENDER_TARGETS`,
   identifiants de tags confirmés par exiftool sur de vrais rendus (MP3, WAV, FLAC), pochette MP3/WAV/FLAC.
+- Interface restylée (thème quasi noir, accent vert, maquette C) ; « release » remplace « EP » dans les textes.
 - Presets de rendu capturés et vérifiés par rendu : WAV 24/16 bits, MP3 CBR 320 kbps, FLAC 24 bits.
+- Checklist manuelle (`docs/testing.md`) terminée sur REAPER 7.80 le 2026-09-28 : sans ReaImGui, aspect visuel,
+  lot 1 (édition, pochette JPEG/PNG, synchro, persistance), export WAV 24 + MP3 vérifié à l'exiftool, annulation
+  d'un rendu, long export, autre projet dans le même onglet, changement d'onglet. Les autres points sont couverts
+  par les tests automatiques et le rendu de bout en bout. Fichier partiel laissé par un rendu annulé : non relevé.
 
 ## Reste à faire
-1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER 7.80 (interface réelle).
-   Validés : sans ReaImGui (message clair), aspect visuel (maquette C), lot 1 (création des régions, fiche,
-   pochette JPEG et PNG, renommage et annulation, synchro avec REAPER, ISRC invalide, morceau exclu, persistance).
-   Export WAV 24 + MP3 réel vérifié à l'exiftool (tags ID3/RIFF, 320 kbps, 24 bits, pochette PNG identique).
-   Considérés comme couverts par les tests automatiques et le rendu de bout en bout (non refaits à la main) :
-   réglages de rendu restaurés, FLAC, projet non enregistré, caractères interdits, Save / Save As,
-   saisie en cours lors d'un changement d'onglet, fichier verrouillé.
-   Restent à faire à la main : annulation d'un rendu, long export (8 morceaux), autre projet dans le même onglet,
-   changement d'onglet.
-2. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
+1. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
 
 ## Points mineurs reportés (relecture)
 - Les jobs et l'existence de la pochette sont recalculés à chaque image (à déplacer dans `rebuild`).
