@@ -26,6 +26,7 @@ package.path = r.ImGui_GetBuiltinPath() .. "/?.lua;" .. script_dir .. "?.lua;" .
 local ImGui = require("imgui")("0.9")
 local App = require("release_exporter.app")
 local ui = require("release_exporter.ui")
+local theme = require("release_exporter.ui.theme")
 
 local app = App.new(r)
 local ctx = ImGui.CreateContext("Release Exporter")
@@ -43,12 +44,14 @@ local function loop()
     end
   end
   app:refresh()
-  ImGui.SetNextWindowSize(ctx, 920, 600, ImGui.Cond_FirstUseEver)
+  ImGui.SetNextWindowSize(ctx, 980, 640, ImGui.Cond_FirstUseEver)
+  theme.push(ImGui, ctx)
   local visible, open = ImGui.Begin(ctx, "Release Exporter", true)
   if visible then
     ui.draw(ImGui, ctx, app)
     ImGui.End(ctx)
   end
+  theme.pop(ImGui, ctx)
   if open then r.defer(loop) end
 end
 

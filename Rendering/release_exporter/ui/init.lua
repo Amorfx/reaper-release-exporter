@@ -7,7 +7,7 @@ local widgets = require("release_exporter.ui.widgets")
 
 local M = {}
 
-local EXPORT_BAR_HEIGHT = 110
+local EXPORT_BAR_HEIGHT = 104
 local generation
 
 function M.reset()
@@ -22,9 +22,8 @@ function M.draw(ImGui, ctx, app)
     generation = app.generation
   end
   ep_panel.draw(ImGui, ctx, app)
-  ImGui.Spacing(ctx)
-  local _, height = ImGui.GetContentRegionAvail(ctx)
-  tracks_table.draw(ImGui, ctx, app, math.max(120, height - EXPORT_BAR_HEIGHT))
+  ImGui.Dummy(ctx, 0, 4)
+  tracks_table.draw(ImGui, ctx, app, EXPORT_BAR_HEIGHT)
   export_bar.draw(ImGui, ctx, app)
 end
 

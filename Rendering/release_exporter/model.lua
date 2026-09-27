@@ -141,7 +141,7 @@ function M.validate(ep, rows, settings, output_dir, opts)
 
   if M.blank(ep.artist) then err("ep.artist", "Artist is required.") end
   if M.blank(ep.album) then err("ep.album", "EP title is required.") end
-  if not M.is_valid_year(trim(ep.year)) then err("ep.year", "Year must be YYYY or YYYY-MM-DD.") end
+  if not M.is_valid_year(trim(ep.year)) then err("ep.year", "Release date must be YYYY or YYYY-MM-DD.") end
   if M.blank(ep.cover) then
     warn("ep.cover", "No cover image.")
   elseif opts.file_exists and not opts.file_exists(trim(ep.cover)) then

@@ -17,7 +17,7 @@ function M.draw(ImGui, ctx, app)
   if not ImGui.BeginPopupModal(ctx, M.ID, true, ImGui.WindowFlags_AlwaysAutoResize) then return end
   local s = app.settings
 
-  ImGui.TextDisabled(ctx, "Output folder (empty = next to the project)")
+  widgets.label(ImGui, ctx, "Output folder (empty = next to the project)")
   local dir = widgets.text_field(ImGui, ctx, "##output_dir", s.output_dir, { width = 420, hint = app:output_dir() })
   if dir then app:set_setting("output_dir", dir) end
   if app.r.JS_Dialog_BrowseForFolder then
@@ -28,21 +28,21 @@ function M.draw(ImGui, ctx, app)
     end
   end
 
-  ImGui.TextDisabled(ctx, "File name pattern: {nn} {n} {title} {artist} {album} {year}")
+  widgets.label(ImGui, ctx, "File name pattern: {nn} {n} {title} {artist} {album} {year}")
   local pattern = widgets.text_field(ImGui, ctx, "##pattern", s.pattern, { width = 420 })
   if pattern then
     app:set_setting("pattern", model.blank(pattern) and model.default_settings().pattern or pattern)
   end
 
-  ImGui.TextDisabled(ctx, "Main format")
+  widgets.label(ImGui, ctx, "Main format")
   local primary = widgets.combo(ImGui, ctx, "##primary", s.primary, PRIMARY, 200)
   if primary then app:set_setting("primary", primary) end
 
-  ImGui.TextDisabled(ctx, "Second format")
+  widgets.label(ImGui, ctx, "Second format")
   local secondary = widgets.combo(ImGui, ctx, "##secondary", s.secondary, SECONDARY, 200)
   if secondary then app:set_setting("secondary", secondary) end
 
-  ImGui.TextDisabled(ctx, "Sample rate")
+  widgets.label(ImGui, ctx, "Sample rate")
   local srate = widgets.combo(ImGui, ctx, "##srate", s.srate, SAMPLE_RATES, 200)
   if srate then app:set_setting("srate", srate) end
 

@@ -15,7 +15,7 @@ Fill your EP's metadata in one window and export every song as WAV + MP3/FLAC wi
 ## Workflow
 1. Put the songs of your EP in one project: rendered mixes or subprojects, in order.
 2. One region per song. No regions yet? Select the items and click "Create one region per selected item".
-3. Fill the EP card (artist, title, year, cover…) and the songs table (title = region name, ISRC…).
+3. Fill the EP card (artist, title, release date, cover…) and the songs table (title = region name, ISRC…).
 4. Click "Export EP". Files land in `<project folder>/Exports/<EP title>` unless you pick another folder.
 
 ## Good to know

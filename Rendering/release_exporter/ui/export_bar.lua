@@ -8,17 +8,17 @@ local report_popup = require("release_exporter.ui.report_popup")
 local M = {}
 
 local CONFIRM_ID = "Confirm export"
-local MAX_LINES = 3
+local MAX_CHIPS = 4
 local existing = {}
 
-local function draw_issues(ImGui, ctx, issues, color, prefix)
-  for i, issue in ipairs(issues) do
-    if i > MAX_LINES then
-      ImGui.TextColored(ctx, color, ("... and %d more"):format(#issues - MAX_LINES))
-      break
-    end
-    ImGui.TextColored(ctx, color, prefix .. issue.message)
-  end
+function M.export_label(count)
+  if count == 0 then return "Export" end
+  return ("Export %d %s"):format(count, count == 1 and "song" or "songs")
+end
+
+local function button_width(ImGui, ctx, label)
+  local pad = ImGui.GetStyleVar(ctx, ImGui.StyleVar_FramePadding)
+  return ImGui.CalcTextSize(ctx, label) + pad * 2
 end
 
 local function draw_confirm(ImGui, ctx, app, jobs)
@@ -26,12 +26,12 @@ local function draw_confirm(ImGui, ctx, app, jobs)
   local files = 0
   for _, job in ipairs(jobs) do files = files + #job.files end
   ImGui.Text(ctx, ("%d songs -> %d files in"):format(#jobs, files))
-  ImGui.TextDisabled(ctx, app:output_dir())
+  widgets.label(ImGui, ctx, app:output_dir())
   if #existing > 0 then
     ImGui.TextColored(ctx, widgets.COLOR_WARNING, ("%d files already exist and will be overwritten."):format(#existing))
   end
   ImGui.Separator(ctx)
-  if ImGui.Button(ctx, #existing > 0 and "Overwrite and export" or "Export") then
+  if widgets.primary_button(ImGui, ctx, #existing > 0 and "Overwrite and export" or "Export") then
     app.pending_export = true
     ImGui.CloseCurrentPopup(ctx)
   end
@@ -44,19 +44,29 @@ function M.draw(ImGui, ctx, app)
   local v = app.validation
   local jobs = app:jobs()
   ImGui.Separator(ctx)
-  draw_issues(ImGui, ctx, v.errors, widgets.COLOR_ERROR, "Error: ")
-  if #v.errors == 0 then draw_issues(ImGui, ctx, v.warnings, widgets.COLOR_WARNING, "Warning: ") end
+  ImGui.Spacing(ctx)
+  local chips = widgets.issue_chips(v.errors, v.warnings, MAX_CHIPS)
+  if #chips.visible > 0 then widgets.chip_row(ImGui, ctx, chips) end
 
   local s = app.settings
   local formats = model.FORMAT_LABELS[s.primary]
   if s.secondary ~= "none" then formats = formats .. " + " .. model.FORMAT_LABELS[s.secondary] end
   local example = jobs[1] and jobs[1].basename or "-"
-  ImGui.TextDisabled(ctx, ("%s  |  %s  |  e.g. %s"):format(formats, app:output_dir(), example))
+  local folder = widgets.short_path(app:output_dir(), os.getenv("HOME"))
+  ImGui.AlignTextToFramePadding(ctx)
+  widgets.label(ImGui, ctx, ("%s  ·  %s  ·  e.g. %s"):format(formats, folder, example))
 
-  if ImGui.Button(ctx, "Settings...") then ImGui.OpenPopup(ctx, settings_popup.ID) end
+  local export = M.export_label(#jobs)
+  local gap = ImGui.GetStyleVar(ctx, ImGui.StyleVar_ItemSpacing)
+  local buttons = button_width(ImGui, ctx, "Settings") + gap + button_width(ImGui, ctx, export)
+  -- Right-align the buttons, but never over the summary on a narrow window.
+  local after_summary = ImGui.GetItemRectMax(ctx) - ImGui.GetWindowPos(ctx) + gap
+  local right = ImGui.GetWindowWidth(ctx) - buttons - ImGui.GetStyleVar(ctx, ImGui.StyleVar_WindowPadding)
+  ImGui.SameLine(ctx, math.max(after_summary, right))
+  if ImGui.Button(ctx, "Settings") then ImGui.OpenPopup(ctx, settings_popup.ID) end
   ImGui.SameLine(ctx)
   ImGui.BeginDisabled(ctx, not app:can_export())
-  if ImGui.Button(ctx, ("Export EP (%d)"):format(#jobs)) then
+  if widgets.primary_button(ImGui, ctx, export) then
     existing = app:existing_files()
     ImGui.OpenPopup(ctx, CONFIRM_ID)
   end

@@ -11,7 +11,8 @@ Run on REAPER 7.80 (the only supported and tested version), with ReaImGui ≥ 0.
 ## Checks
 - [ ] Without ReaImGui installed: a clear message box, no Lua error.
 - [ ] Empty project: the empty state is shown. Select the 3 items → "Create one region per selected item" → 3 rows named after the items. One Ctrl+Z removes all 3 regions.
-- [ ] Fill Artist, EP title, Year. Drop a JPEG onto the cover → the preview appears.
+- [ ] Look: opaque near-black window (nothing shows through), EP card and songs table in rounded cards, green accent only on ticked boxes and the Export button, placeholders clearly dimmer than values. Compare with the mockup (`style-direction3`, option C).
+- [ ] Fill Artist, EP title, Release date. Drop a JPEG onto the cover → the preview appears.
 - [ ] Edit a title in the table, press Tab → the region is renamed in the timeline. One Ctrl+Z restores the old name.
 - [ ] Rename a region in REAPER → the table updates. Move the last region to the start → the row order and numbers update.
 - [ ] Enter an invalid ISRC → the cell turns red, a tooltip shows, Export is disabled. Fix it → Export is enabled.

@@ -1,11 +1,14 @@
 -- @noindex
 -- EP card: cover (click to choose, or drop a file) and the EP-level fields.
 local model = require("release_exporter.model")
+local theme = require("release_exporter.ui.theme")
 local widgets = require("release_exporter.ui.widgets")
 
 local M = {}
 
-local COVER_SIZE = 110
+local C = theme.COLORS
+local COVER_SIZE = 118
+local GRID_COLUMNS = 6
 local cover = { path = nil, image = nil }
 
 -- Forgets the cached cover, e.g. after the ImGui context had to be recreated.
@@ -29,12 +32,29 @@ end
 
 local function field(ImGui, ctx, app, label, key, width, hint)
   ImGui.BeginGroup(ctx)
-  ImGui.TextDisabled(ctx, label)
+  widgets.label(ImGui, ctx, label)
   local value = widgets.text_field(ImGui, ctx, "##ep_" .. key, app.ep[key], {
     width = width, hint = hint, error = model.issue_for(app.validation.errors, nil, "ep." .. key),
   })
   if value then app:set_ep_field(key, value) end
   ImGui.EndGroup(ctx)
+end
+
+-- Empty drop zone: dashed outline (accent while hovered), a "+" and a hint, centred.
+local function drop_zone(ImGui, ctx)
+  local x, y = ImGui.GetCursorScreenPos(ctx)
+  local clicked = ImGui.InvisibleButton(ctx, "##cover", COVER_SIZE, COVER_SIZE)
+  local hovered = ImGui.IsItemHovered(ctx)
+  local draw_list = ImGui.GetWindowDrawList(ctx)
+  widgets.dashed_rect(ImGui, draw_list, x, y, x + COVER_SIZE, y + COVER_SIZE, hovered and C.accent or C.dim)
+  local lines = { { "+", hovered and C.accent or C.dim }, { "Drop cover", C.muted }, { "or click", C.muted } }
+  local line_height = ImGui.GetTextLineHeight(ctx)
+  local top = y + (COVER_SIZE - line_height * #lines) / 2
+  for i, line in ipairs(lines) do
+    local width = ImGui.CalcTextSize(ctx, line[1])
+    ImGui.DrawList_AddText(draw_list, x + (COVER_SIZE - width) / 2, top + (i - 1) * line_height, line[2], line[1])
+  end
+  return clicked
 end
 
 local function draw_cover(ImGui, ctx, app)
@@ -44,7 +64,7 @@ local function draw_cover(ImGui, ctx, app)
   if image then
     clicked = ImGui.ImageButton(ctx, "##cover", image, COVER_SIZE, COVER_SIZE)
   else
-    clicked = ImGui.Button(ctx, "Drop cover\nor click", COVER_SIZE, COVER_SIZE)
+    clicked = drop_zone(ImGui, ctx)
   end
   if clicked then
     local ok, file = app.r.GetUserFileNameForRead("", "Choose cover image", "jpg")
@@ -62,25 +82,32 @@ local function draw_cover(ImGui, ctx, app)
   ImGui.EndGroup(ctx)
 end
 
-function M.draw(ImGui, ctx, app)
-  draw_cover(ImGui, ctx, app)
-  ImGui.SameLine(ctx)
+-- Fields laid out on a 6-column grid: each row is a list of { label, key, span, hint }.
+local ROWS = {
+  { { "Artist", "artist", 2 }, { "EP title", "album", 3 }, { "Release date", "year", 1, "YYYY or YYYY-MM-DD" } },
+  { { "Album artist", "album_artist", 2, "Same as artist" }, { "Genre", "genre", 1 }, { "Label", "label", 1 },
+    { "Copyright", "copyright", 2, "(P) 2026 Name" } },
+}
+
+local function draw_fields(ImGui, ctx, app)
   ImGui.BeginGroup(ctx)
-  local width = ImGui.GetContentRegionAvail(ctx)
-  local col = (width - 16) / 10
-  field(ImGui, ctx, app, "Artist", "artist", col * 3.5)
-  ImGui.SameLine(ctx)
-  field(ImGui, ctx, app, "EP title", "album", col * 4.5)
-  ImGui.SameLine(ctx)
-  field(ImGui, ctx, app, "Year", "year", col * 2, "YYYY")
-  field(ImGui, ctx, app, "Album artist", "album_artist", col * 3.5, app.ep.artist)
-  ImGui.SameLine(ctx)
-  field(ImGui, ctx, app, "Genre", "genre", col * 2)
-  ImGui.SameLine(ctx)
-  field(ImGui, ctx, app, "Label", "label", col * 2)
-  ImGui.SameLine(ctx)
-  field(ImGui, ctx, app, "Copyright", "copyright", col * 2.5, "(P) 2026 Name")
+  local gap = ImGui.GetStyleVar(ctx, ImGui.StyleVar_ItemSpacing)
+  local column = (ImGui.GetContentRegionAvail(ctx) - gap * (GRID_COLUMNS - 1)) / GRID_COLUMNS
+  for _, row in ipairs(ROWS) do
+    for i, f in ipairs(row) do
+      if i > 1 then ImGui.SameLine(ctx) end
+      field(ImGui, ctx, app, f[1], f[2], column * f[3] + gap * (f[3] - 1), f[4])
+    end
+  end
   ImGui.EndGroup(ctx)
+end
+
+function M.draw(ImGui, ctx, app)
+  widgets.card(ImGui, ctx, "##ep", {}, function()
+    draw_cover(ImGui, ctx, app)
+    ImGui.SameLine(ctx, 0, 16)
+    draw_fields(ImGui, ctx, app)
+  end)
 end
 
 return M

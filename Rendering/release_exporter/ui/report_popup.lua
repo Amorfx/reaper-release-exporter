@@ -15,11 +15,11 @@ function M.draw(ImGui, ctx, app)
   if report.error then ImGui.TextColored(ctx, widgets.COLOR_ERROR, "Export stopped: " .. report.error) end
   for _, item in ipairs(report.items) do
     if item.ok then
-      ImGui.Text(ctx, "OK      " .. item.title)
+      ImGui.TextColored(ctx, widgets.COLOR_OK, "OK      " .. item.title)
     else
       ImGui.TextColored(ctx, widgets.COLOR_ERROR, "FAILED  " .. item.title .. " - " .. (item.error or ""))
     end
-    for _, path in ipairs(item.files or {}) do ImGui.TextDisabled(ctx, "        " .. path) end
+    for _, path in ipairs(item.files or {}) do widgets.label(ImGui, ctx, "        " .. path) end
   end
   ImGui.Separator(ctx)
   if ImGui.Button(ctx, "Open folder") then fs.open_folder(app.r, report.output_dir) end
