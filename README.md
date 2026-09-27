@@ -53,7 +53,7 @@ Release Exporter is installed with [ReaPack](https://reapack.com), REAPER's pack
    https://github.com/Amorfx/reaper-release-plugin/raw/main/index.xml
    ```
 
-   ![ReaPack's Import repositories dialog with the Release Exporter URL](docs/images/reapack-import.png)
+   <img src="docs/images/reapack-import.png" width="605" alt="ReaPack's Import repositories dialog with the Release Exporter URL">
 
 4. **Install Release Exporter**: *Extensions > ReaPack > Browse packages*, search for `Release Exporter`,
    right-click it > *Install*, then *Apply*.
@@ -70,7 +70,8 @@ Put all the songs of your release in one project, in order: rendered mixes, stem
 song needs a region that covers it exactly.
 
 Already have regions? Skip to step 2. Otherwise, select the song items and click **Create one region per
-selected item**: each region is named after its item. One Ctrl+Z removes them all.
+selected item**: each region is named after its item. One Ctrl+Z removes them all. Until the project has songs,
+the window only shows this step and flags nothing else.
 
 ![Empty state with the "Create one region per selected item" button](docs/images/empty-state.png)
 
@@ -91,8 +92,8 @@ Each row is a region, in timeline order.
   (12 characters such as `FRXXX2600001`, dashes allowed).
 - **Untick** a song to leave it out: it is dimmed and the numbering skips it.
 
-Problems appear as chips at the bottom. Red ones block the export, amber ones are only warnings; the faulty cell
-turns red and shows the reason on hover.
+Problems appear as chips at the bottom, prefixed with the song they concern (`Song 3 · …`). Red ones block the
+export, amber ones are only warnings; the faulty cell turns red and shows the reason on hover.
 
 ![An invalid ISRC: the cell turns red and a red chip blocks the export](docs/images/validation.png)
 
@@ -101,7 +102,7 @@ turns red and shows the reason on hover.
 The line above the buttons sums up the formats, the output folder and an example file name. Click **Settings** to
 change them:
 
-![Export settings: output folder, file name pattern, formats and sample rate](docs/images/settings.png)
+<img src="docs/images/settings.png" width="456" alt="Export settings: output folder, file name pattern, formats and sample rate">
 
 | Setting | Default | Options |
 |---|---|---|
@@ -122,7 +123,7 @@ Click **Export N songs**. A summary shows what will be written and warns when fi
 REAPER then renders the songs one after the other. The report lists every file, and *Open folder* takes you
 there:
 
-![Export report with one line per song and the rendered files](docs/images/report.png)
+<img src="docs/images/report.png" width="395" alt="Export report with one line per song and the rendered files">
 
 ## Reference
 
