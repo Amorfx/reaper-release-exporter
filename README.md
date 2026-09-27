@@ -156,11 +156,11 @@ The pattern is applied to each song, then the extension is added.
 | `{nn}` | Track number, two digits | `02` |
 | `{n}` | Track number | `2` |
 | `{title}` | Song title | `Night Drive` |
-| `{artist}` | Song artist | `Clément Décou` |
+| `{artist}` | Song artist | `Élise Moreau` |
 | `{album}` | Release title | `Night Songs` |
 | `{year}` | Release date as typed | `2026` |
 
-`{nn} - {artist} - {title}` gives `02 - Clément Décou - Night Drive.wav`. The characters `/ \ : * ? " < > | $ ;`
+`{nn} - {artist} - {title}` gives `02 - Élise Moreau - Night Drive.wav`. The characters `/ \ : * ? " < > | $ ;`
 are replaced by `-`, so `AC/DC: Live?` becomes `AC-DC- Live-`.
 
 ### What blocks the export
