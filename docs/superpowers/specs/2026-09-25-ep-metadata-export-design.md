@@ -194,7 +194,7 @@ ProjExtState (EP, morceaux) ────┘                  │
      incluse, titre vide, ISRC mal formé, artiste ou titre de l'EP vide, année
      invalide, dossier de sortie impossible à créer, deux morceaux produisant le
      même nom de fichier.
-   - **Avertissements** (non bloquants) : ISRC manquant, pochette absente,
+   - **Avertissements** (non bloquants) : pochette absente,
      fichier de pochette introuvable.
 2. **Récapitulatif** : « N morceaux → M fichiers dans `<dossier>` ». Si des fichiers
    existent déjà, on demande s'il faut les écraser. Si oui, ils sont supprimés juste

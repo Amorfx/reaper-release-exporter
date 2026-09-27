@@ -11,7 +11,8 @@ _Dernière mise à jour : 2026-09-27_
 - Presets de rendu capturés et vérifiés par rendu : WAV 24/16 bits, MP3 CBR 320 kbps, FLAC 24 bits.
 
 ## Reste à faire
-1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER (interface réelle).
+1. **Dérouler la checklist manuelle** `docs/testing.md` dans REAPER 7.80 (interface réelle).
+   Validés : sans ReaImGui (message clair), aspect visuel (maquette C).
 2. **Publier** : dépôt GitHub, `reapack-index --commit` pour générer `index.xml`, CI verte.
 
 ## Points mineurs reportés (relecture)

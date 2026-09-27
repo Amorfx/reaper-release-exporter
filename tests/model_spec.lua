@@ -172,11 +172,19 @@ describe("model.validate", function()
     assert.are.equal("{B}", v.errors[1].guid)
   end)
 
-  it("warns about a missing ISRC and a missing cover file without blocking", function()
-    local v = model.validate(make_ep({ cover = "/missing.jpg" }), make_rows({ { "{A}", "Intro", "" } }), settings,
-      "/out", { file_exists = function() return false end })
+  it("warns about a missing cover file without blocking", function()
+    local v = model.validate(make_ep({ cover = "/missing.jpg" }), make_rows({ { "{A}", "Intro", "FRXXX2600001" } }),
+      settings, "/out", { file_exists = function() return false end })
     assert.are.same({}, v.errors)
-    assert.are.equal(2, #v.warnings)
+    assert.are.same({ "Cover image not found; it will be skipped." }, { v.warnings[1].message })
+    assert.are.equal(1, #v.warnings)
+  end)
+
+  it("accepts an empty ISRC silently: distributors often assign it later", function()
+    local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "" } }), settings, "/out",
+      { file_exists = always })
+    assert.are.same({}, v.errors)
+    assert.are.same({}, v.warnings)
   end)
 
   it("finds the issue for a given row and field", function()

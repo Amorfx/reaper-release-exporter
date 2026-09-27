@@ -154,10 +154,9 @@ function M.validate(ep, rows, settings, output_dir, opts)
     if row.include then
       included = included + 1
       if M.blank(row.title) then err("title", "Title is required.", row.guid) end
+      -- An empty ISRC is fine: distributors often assign it after the export.
       local isrc = M.normalize_isrc(row.isrc)
-      if isrc == "" then
-        warn("isrc", "No ISRC.", row.guid)
-      elseif not M.is_valid_isrc(isrc) then
+      if isrc ~= "" and not M.is_valid_isrc(isrc) then
         err("isrc", "ISRC must look like FRXXX2600001.", row.guid)
       end
     end
