@@ -7,7 +7,9 @@ local widgets = require("release_exporter.ui.widgets")
 
 local M = {}
 
-local EXPORT_BAR_HEIGHT = 104
+-- Room kept below the songs table. The bar's height depends on its chips, so it is measured every
+-- frame and applied on the next one; this is only the first frame's guess.
+local bar_height = 104
 local generation
 
 function M.reset()
@@ -23,8 +25,11 @@ function M.draw(ImGui, ctx, app)
   end
   ep_panel.draw(ImGui, ctx, app)
   ImGui.Dummy(ctx, 0, 4)
-  tracks_table.draw(ImGui, ctx, app, EXPORT_BAR_HEIGHT)
+  tracks_table.draw(ImGui, ctx, app, bar_height)
+  local top = ImGui.GetCursorPosY(ctx)
   export_bar.draw(ImGui, ctx, app)
+  -- Includes the trailing item spacing, which matches the gap the table leaves above the bar.
+  bar_height = ImGui.GetCursorPosY(ctx) - top
 end
 
 return M

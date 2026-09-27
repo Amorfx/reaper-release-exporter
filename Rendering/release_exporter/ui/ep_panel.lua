@@ -60,7 +60,10 @@ local function draw_cover(ImGui, ctx, app)
   local image = cover_image(ImGui, ctx, app.ep.cover)
   local clicked
   if image then
+    -- No frame padding: the image fills the same square as the empty drop zone.
+    ImGui.PushStyleVar(ctx, ImGui.StyleVar_FramePadding, 0, 0)
     clicked = ImGui.ImageButton(ctx, "##cover", image, COVER_SIZE, COVER_SIZE)
+    ImGui.PopStyleVar(ctx)
   else
     clicked = drop_zone(ImGui, ctx)
   end
