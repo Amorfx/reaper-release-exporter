@@ -1,3 +1,4 @@
+-- @noindex
 -- Render sink configurations per preset, captured from REAPER (see docs/reaper-api-notes.md).
 -- A 4-character code ("evaw", "l3pm", "calf") means "REAPER defaults for that sink".
 local M = {}

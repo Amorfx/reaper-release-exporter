@@ -1,3 +1,4 @@
+-- @noindex
 -- Pure data model: EP and track fields, fallbacks, numbering, validation and file names.
 -- Must never reference the `reaper` API so it stays testable outside REAPER.
 local M = {}

@@ -1,3 +1,4 @@
+-- @noindex
 -- EP card: cover (click to choose, or drop a file) and the EP-level fields.
 local model = require("release_exporter.model")
 local widgets = require("release_exporter.ui.widgets")

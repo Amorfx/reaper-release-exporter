@@ -1,3 +1,4 @@
+-- @noindex
 -- Small file-system helpers built on plain Lua io/os plus the REAPER API where needed.
 local M = {}
 

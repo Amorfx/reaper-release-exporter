@@ -1,3 +1,4 @@
+-- @noindex
 -- Export settings modal.
 local model = require("release_exporter.model")
 local widgets = require("release_exporter.ui.widgets")

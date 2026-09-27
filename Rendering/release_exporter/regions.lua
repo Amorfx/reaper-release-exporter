@@ -1,3 +1,4 @@
+-- @noindex
 -- REAPER adapter for project regions. Takes the API table `r` so it can run against tests/support/fake_reaper.lua.
 local M = {}
 

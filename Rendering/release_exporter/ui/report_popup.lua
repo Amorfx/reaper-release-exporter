@@ -1,3 +1,4 @@
+-- @noindex
 -- Export report modal, opened by the main loop once an export finishes.
 local fs = require("release_exporter.fs")
 local widgets = require("release_exporter.ui.widgets")

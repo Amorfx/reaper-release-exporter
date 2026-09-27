@@ -1,3 +1,4 @@
+-- @noindex
 -- REAPER adapter: persists EP, track and settings data in the project (ProjExtState) as JSON.
 local json = require("release_exporter.vendor.json")
 local model = require("release_exporter.model")

@@ -1,3 +1,4 @@
+-- @noindex
 -- Songs table (one row per region) and the empty state for projects without regions.
 local model = require("release_exporter.model")
 local widgets = require("release_exporter.ui.widgets")

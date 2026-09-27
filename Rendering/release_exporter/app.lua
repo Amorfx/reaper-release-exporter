@@ -1,3 +1,4 @@
+-- @noindex
 -- Controller between the ReaImGui views and the model/adapters. Holds the state of the active project.
 local model = require("release_exporter.model")
 local mapper = require("release_exporter.metadata_mapper")

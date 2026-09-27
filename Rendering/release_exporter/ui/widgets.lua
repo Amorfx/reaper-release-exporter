@@ -1,3 +1,4 @@
+-- @noindex
 -- Shared ReaImGui widgets.
 local M = {}
 

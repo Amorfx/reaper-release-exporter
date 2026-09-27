@@ -1,3 +1,4 @@
+-- @noindex
 -- Pure: turns a resolved track (see model.resolve) into REAPER RENDER_METADATA entries.
 -- Every scheme is written explicitly so we never rely on REAPER's implicit cross-scheme mapping.
 -- Identifiers are confirmed by a real render inspected with exiftool (docs/reaper-api-notes.md).

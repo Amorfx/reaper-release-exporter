@@ -1,3 +1,4 @@
+-- @noindex
 -- Drives REAPER's renderer one region at a time, then restores the user's render settings no matter what.
 local fs = require("release_exporter.fs")
 

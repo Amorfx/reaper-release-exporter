@@ -21,5 +21,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
       - run: gem install reapack-index
       - run: reapack-index --check

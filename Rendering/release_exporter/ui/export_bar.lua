@@ -1,3 +1,4 @@
+-- @noindex
 -- Bottom bar: issues, summary, Settings and Export buttons, and the confirmation modal.
 local model = require("release_exporter.model")
 local widgets = require("release_exporter.ui.widgets")
