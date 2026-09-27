@@ -10,6 +10,9 @@ on:
 permissions:
   contents: write
 
+env:
+  INDEX_NAME: Release Exporter
+
 concurrency:
   group: reapack-index-${{ github.ref }}
   cancel-in-progress: false
@@ -37,6 +40,7 @@ jobs:
         run: |
           flags=""
           [ -f index.xml ] || flags="--amend"
+          reapack-index --no-commit --name "$INDEX_NAME"
           reapack-index --no-commit $flags
           cat index.xml
       - name: Update and push the index (main)
@@ -44,5 +48,6 @@ jobs:
         run: |
           flags=""
           [ -f index.xml ] || flags="--amend"
+          reapack-index --no-commit --name "$INDEX_NAME"
           reapack-index --commit $flags
           git push origin HEAD:main
