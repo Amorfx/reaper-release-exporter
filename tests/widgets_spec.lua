@@ -65,6 +65,11 @@ describe("widgets.issue_chips", function()
     assert.is_nil(chips.overflow)
   end)
 
+  it("names the song of a per-song issue", function()
+    local chips = widgets.issue_chips({ { message = "ISRC must look like FRXXX2600001.", number = 3 } }, {}, 4)
+    assert.are.equal("Song 3 · ISRC must look like FRXXX2600001.", chips.visible[1].text)
+  end)
+
   it("folds the extra issues into one chip whose tooltip lists them", function()
     local chips = widgets.issue_chips(issues(3, "E"), issues(3, "W"), 4)
     assert.are.equal(4, #chips.visible)

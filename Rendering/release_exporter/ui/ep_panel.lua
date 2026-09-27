@@ -33,7 +33,7 @@ end
 
 local function field(ImGui, ctx, app, key, width, hint)
   local value = widgets.text_field(ImGui, ctx, "##ep_" .. key, app.ep[key], {
-    width = width, hint = hint, error = model.issue_for(app.validation.errors, nil, "ep." .. key),
+    width = width, hint = hint, error = app:shows_issues() and model.issue_for(app.validation.errors, nil, "ep." .. key) or nil,
   })
   if value then app:set_ep_field(key, value) end
 end

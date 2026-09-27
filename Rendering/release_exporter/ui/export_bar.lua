@@ -46,7 +46,7 @@ function M.draw(ImGui, ctx, app)
   ImGui.Separator(ctx)
   ImGui.Spacing(ctx)
   local chips = widgets.issue_chips(v.errors, v.warnings, MAX_CHIPS)
-  if #chips.visible > 0 then widgets.chip_row(ImGui, ctx, chips) end
+  if app:shows_issues() and #chips.visible > 0 then widgets.chip_row(ImGui, ctx, chips) end
 
   local s = app.settings
   local formats = model.FORMAT_LABELS[s.primary]

@@ -202,6 +202,12 @@ describe("model.validate", function()
     assert.are.same({}, v.warnings)
   end)
 
+  it("tells which song a per-song issue belongs to", function()
+    local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "" }, { "{B}", "Minuit", "BAD" } }), settings,
+      "/out", { file_exists = always })
+    assert.are.equal(2, v.errors[1].number)
+  end)
+
   it("finds the issue for a given row and field", function()
     local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "BAD" } }), settings, "/out",
       { file_exists = always })

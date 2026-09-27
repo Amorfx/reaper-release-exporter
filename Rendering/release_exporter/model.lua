@@ -143,7 +143,10 @@ end
 function M.validate(ep, rows, settings, output_dir, opts)
   opts = opts or {}
   local errors, warnings = {}, {}
-  local function err(field, message, guid) errors[#errors + 1] = { field = field, message = message, guid = guid } end
+  -- `number` is the song's track number, for issues that belong to one song.
+  local function err(field, message, guid, number)
+    errors[#errors + 1] = { field = field, message = message, guid = guid, number = number }
+  end
   local function warn(field, message, guid) warnings[#warnings + 1] = { field = field, message = message, guid = guid } end
 
   if M.blank(ep.artist) then err("ep.artist", "Artist is required.") end
@@ -162,11 +165,11 @@ function M.validate(ep, rows, settings, output_dir, opts)
   for _, row in ipairs(rows) do
     if row.include then
       included = included + 1
-      if M.blank(row.title) then err("title", "Title is required.", row.guid) end
+      if M.blank(row.title) then err("title", "Title is required.", row.guid, row.number) end
       -- An empty ISRC is fine: distributors often assign it after the export.
       local isrc = M.normalize_isrc(row.isrc)
       if isrc ~= "" and not M.is_valid_isrc(isrc) then
-        err("isrc", "ISRC must look like FRXXX2600001.", row.guid)
+        err("isrc", "ISRC must look like FRXXX2600001.", row.guid, row.number)
       end
     end
   end

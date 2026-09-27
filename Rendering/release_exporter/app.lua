@@ -110,6 +110,12 @@ function App:existing_files()
   return out
 end
 
+-- A project without songs only shows how to create them: pointing at empty required fields
+-- before there is anything to export would greet a new project in red.
+function App:shows_issues()
+  return #self.rows > 0
+end
+
 function App:can_export()
   return #self.validation.errors == 0
 end

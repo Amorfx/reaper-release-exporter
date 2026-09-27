@@ -111,11 +111,14 @@ function M.dashed_rect(ImGui, draw_list, x1, y1, x2, y2, color)
   end)
 end
 
--- Errors first, then warnings; past `max`, the rest folds into one "+n more" chip.
+-- Errors first, then warnings, prefixed with their song when they have one; past `max`, the rest folds into one "+n more" chip.
 function M.issue_chips(errors, warnings, max)
   local all = {}
-  for _, issue in ipairs(errors) do all[#all + 1] = { text = issue.message, kind = "error" } end
-  for _, issue in ipairs(warnings) do all[#all + 1] = { text = issue.message, kind = "warning" } end
+  local function text(issue)
+    return issue.number and ("Song %d · %s"):format(issue.number, issue.message) or issue.message
+  end
+  for _, issue in ipairs(errors) do all[#all + 1] = { text = text(issue), kind = "error" } end
+  for _, issue in ipairs(warnings) do all[#all + 1] = { text = text(issue), kind = "warning" } end
   local chips = { visible = {} }
   for i, chip in ipairs(all) do
     if i <= max then
