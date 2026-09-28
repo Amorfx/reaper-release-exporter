@@ -1,0 +1,57 @@
+name: GitHub release
+# Publishes a GitHub release (tag, notes, zip) whenever @version in the script changes on main.
+# The notes come from @changelog, the same text ReaPack shows. Pull requests only preview it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SCRIPT: Rendering/Release Exporter.lua
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read the version and build the notes and the zip
+        id: build
+        run: |
+          version=$(sed -n 's/^-- @version //p' "$SCRIPT")
+          [ -n "$version" ] || { echo "No @version in $SCRIPT"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          exists=false
+          git rev-parse -q --verify "refs/tags/v$version" >/dev/null && exists=true
+          echo "exists=$exists" >> "$GITHUB_OUTPUT"
+          {
+            awk '/^-- @changelog/ { on = 1; next } on && /^--   / { sub(/^--   /, ""); print; next } on { exit }' "$SCRIPT"
+            echo
+            echo "## Install"
+            echo
+            echo "With ReaPack (recommended, keeps it up to date): *Extensions > ReaPack > Import repositories…* and paste"
+            echo "\`https://github.com/${GITHUB_REPOSITORY}/raw/main/index.xml\`, then install **Release Exporter**."
+            echo
+            echo "Manually: unzip \`release-exporter-$version.zip\` into REAPER's \`Scripts\` folder, then load"
+            echo "\`release-exporter/Release Exporter.lua\` from the *Actions* list. ReaImGui is required; see the README."
+          } > notes.md
+          # One top folder, so unzipping into Scripts does not scatter files there.
+          mkdir -p stage/release-exporter
+          cp -R "$SCRIPT" Rendering/release_exporter LICENSE stage/release-exporter/
+          (cd stage && zip -qr "../release-exporter-$version.zip" release-exporter)
+          echo "=== v$version (tag exists: $exists) ==="
+          cat notes.md
+          unzip -l "release-exporter-$version.zip"
+      - name: Publish the release (main, new version only)
+        if: github.event_name == 'push' && steps.build.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          gh release create "v$VERSION" "release-exporter-$VERSION.zip" \
+            --title "Release Exporter $VERSION" --notes-file notes.md --target "$GITHUB_SHA"

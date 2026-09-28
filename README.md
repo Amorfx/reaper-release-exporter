@@ -62,6 +62,11 @@ Release Exporter is installed with [ReaPack](https://reapack.com), REAPER's pack
 
 ReaPack keeps the script up to date: *Extensions > ReaPack > Synchronize packages*.
 
+**Without ReaPack**: download `release-exporter-<version>.zip` from the
+[latest release](https://github.com/Amorfx/reaper-release-exporter/releases/latest), unzip it into REAPER's `Scripts`
+folder (*Options > Show REAPER resource path*) and load `release-exporter/Release Exporter.lua` from the *Actions* list
+(*New action > Load ReaScript…*). You will have to update it by hand.
+
 ## Quick start
 
 ### 1. One region per song
