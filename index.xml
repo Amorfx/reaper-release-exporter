@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<index version="1" name="Release Exporter" commit="9b056e0bdce9b675ccebb902f51e77ca89876e8b">
+  <category name="Rendering">
+    <reapack name="Release Exporter.lua" type="script" desc="Release Exporter: tag a single, EP or album and export every song in one click">
+      <metadata>
+        <description><![CDATA[{\rtf1\ansi\deff0{\fonttbl{\f0 \fswiss Helvetica;}{\f1 \fmodern Courier;}}
+{\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+\widowctrl\hyphauto
+
+{\pard \ql \f0 \sa180 \li0 \fi0 Fill release-level and per-song metadata (title, artist, ISRC, composer, cover...) in one window, then render every region of the project as WAV + MP3/FLAC with embedded tags. Requires ReaImGui (ReaTeam Extensions).\par}
+}
+]]></description>
+        <link rel="website">https://github.com/Amorfx/reaper-release-exporter</link>
+      </metadata>
+      <version name="0.1.0" author="Clément Décou" time="2026-09-28T10:25:03Z">
+        <changelog><![CDATA[First release.
+- One window for the release (artist, title, date, genre, label, copyright, cover) and its songs (one region each).
+- Exports every song as WAV 24/16-bit plus MP3 320 kbps or FLAC 24-bit, with ID3, RIFF and Vorbis tags and the cover.
+- Checks everything before exporting, never overwrites without asking and restores your render settings.]]></changelog>
+        <source main="main">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/Release%20Exporter.lua</source>
+        <source file="release_exporter/app.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/app.lua</source>
+        <source file="release_exporter/formats.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/formats.lua</source>
+        <source file="release_exporter/fs.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/fs.lua</source>
+        <source file="release_exporter/metadata_mapper.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/metadata_mapper.lua</source>
+        <source file="release_exporter/model.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/model.lua</source>
+        <source file="release_exporter/project_store.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/project_store.lua</source>
+        <source file="release_exporter/regions.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/regions.lua</source>
+        <source file="release_exporter/renderer.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/renderer.lua</source>
+        <source file="release_exporter/ui/ep_panel.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/ep_panel.lua</source>
+        <source file="release_exporter/ui/export_bar.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/export_bar.lua</source>
+        <source file="release_exporter/ui/init.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/init.lua</source>
+        <source file="release_exporter/ui/report_popup.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/report_popup.lua</source>
+        <source file="release_exporter/ui/settings_popup.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/settings_popup.lua</source>
+        <source file="release_exporter/ui/theme.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/theme.lua</source>
+        <source file="release_exporter/ui/tracks_table.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/tracks_table.lua</source>
+        <source file="release_exporter/ui/widgets.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/ui/widgets.lua</source>
+        <source file="release_exporter/vendor/json.lua">https://github.com/Amorfx/reaper-release-exporter/raw/9b056e0bdce9b675ccebb902f51e77ca89876e8b/Rendering/release_exporter/vendor/json.lua</source>
+      </version>
+    </reapack>
+  </category>
+</index>
