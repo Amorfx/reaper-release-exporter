@@ -18,7 +18,9 @@ function M.draw(ImGui, ctx, app)
   local s = app.settings
 
   widgets.label(ImGui, ctx, "Output folder (empty = next to the project)")
-  local dir = widgets.text_field(ImGui, ctx, "##output_dir", s.output_dir, { width = 420, hint = app:output_dir() })
+  local dir = widgets.text_field(ImGui, ctx, "##output_dir", s.output_dir, {
+    width = 420, hint = app:output_dir(), error = model.issue_for(app.validation.errors, nil, "settings.output_dir"),
+  })
   if dir then app:set_setting("output_dir", dir) end
   if app.r.JS_Dialog_BrowseForFolder then
     ImGui.SameLine(ctx)

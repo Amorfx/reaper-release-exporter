@@ -20,6 +20,31 @@ function M.remove(path)
   return os.remove(path)
 end
 
+-- Files and folders alike, on every platform: renaming a path onto itself fails with ENOENT (2) only when
+-- it does not exist. Other errors (permission denied, read-only volume) still mean it is there.
+local ENOENT = 2
+local function exists_any(path)
+  local ok, _, code = os.rename(path, path)
+  return ok ~= nil or code ~= ENOENT
+end
+
+-- Tells whether ensure_dir would succeed, without creating anything: the nearest existing parent must be a
+-- folder we can write to.
+function M.can_create_dir(path)
+  local dir = path:gsub("[/\\]+$", "")
+  while dir ~= "" and not exists_any(dir) do
+    local parent = dir:match("^(.*)[/\\][^/\\]*$")
+    if not parent or parent == dir then return false end
+    dir = parent
+  end
+  local probe = (dir == "" and "" or dir) .. "/.release_exporter_probe"
+  local f = io.open(probe, "wb")
+  if not f then return false end
+  f:close()
+  os.remove(probe)
+  return true
+end
+
 -- Creates the folder, then proves it is writable with a probe file.
 function M.ensure_dir(r, path)
   r.RecursiveCreateDirectory(path, 0)

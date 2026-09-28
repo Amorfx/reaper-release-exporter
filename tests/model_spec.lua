@@ -123,6 +123,25 @@ describe("model.plan_outputs", function()
   end)
 end)
 
+describe("model paths", function()
+  it("recognises full paths on macOS, Linux and Windows", function()
+    for _, path in ipairs({ "/Users/me/Music", "C:\\Music", "c:/Music", "\\\\nas\\share" }) do
+      assert.is_true(model.is_absolute_path(path), path)
+    end
+    for _, path in ipairs({ "s", "Exports", "../Mix", "~/Music", "C:Music", "" }) do
+      assert.is_false(model.is_absolute_path(path), path)
+    end
+  end)
+
+  it("expands a leading ~ to the home folder only", function()
+    assert.are.equal("/Users/me/Music", model.expand_home("~/Music", "/Users/me"))
+    assert.are.equal("/Users/me", model.expand_home("~", "/Users/me"))
+    assert.are.equal("~other/Music", model.expand_home("~other/Music", "/Users/me"))
+    assert.are.equal("/a/~/b", model.expand_home("/a/~/b", "/Users/me"))
+    assert.are.equal("~/Music", model.expand_home("~/Music", nil))
+  end)
+end)
+
 describe("model.validate", function()
   local settings = model.default_settings()
 
@@ -131,6 +150,18 @@ describe("model.validate", function()
       { file_exists = always })
     assert.are.same({}, v.errors)
     assert.are.same({}, v.warnings)
+  end)
+
+  it("blocks a relative output folder", function()
+    local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "" } }), settings, "Exports",
+      { file_exists = always })
+    assert.is_truthy(model.issue_for(v.errors, nil, "settings.output_dir"):find("full path", 1, true))
+  end)
+
+  it("blocks an output folder that cannot be created", function()
+    local v = model.validate(make_ep(), make_rows({ { "{A}", "Intro", "" } }), settings, "/Volumes/Gone/EP",
+      { file_exists = always, folder_writable = function() return false end })
+    assert.is_truthy(model.issue_for(v.errors, nil, "settings.output_dir"):find("cannot be created", 1, true))
   end)
 
   it("names the release title in its error", function()

@@ -16,6 +16,32 @@ local function fill_ep(app)
 end
 
 describe("app", function()
+  -- The folder check touches the real disk, and these projects live at made-up paths.
+  local writable
+  before_each(function()
+    writable = true
+    stub(fs, "can_create_dir", function() return writable end)
+  end)
+  after_each(function() fs.can_create_dir:revert() end)
+
+  it("blocks the export when the output folder cannot be created", function()
+    writable = false
+    local _, app = setup()
+    fill_ep(app)
+    assert.is_false(app:can_export())
+    assert.is_truthy(app.validation.errors[1].message:find("cannot be created", 1, true))
+  end)
+
+  it("checks the output folder once per path", function()
+    local _, app = setup()
+    fill_ep(app) -- the release title is part of the default folder, so this checks a new path
+    local calls = #fs.can_create_dir.calls
+    app:set_track_field(app.rows[1].guid, "composer", "Clem")
+    assert.are.equal(calls, #fs.can_create_dir.calls)
+    app:set_setting("output_dir", "/elsewhere")
+    assert.are.equal(calls + 1, #fs.can_create_dir.calls)
+  end)
+
   it("builds rows from the project's regions", function()
     local _, app = setup()
     assert.are.equal(2, #app.rows)
@@ -162,6 +188,12 @@ describe("app", function()
     r.add_region(0, 10, "Intro")
     app:refresh(true)
     assert.is_true(app:shows_issues())
+  end)
+
+  it("expands ~ in the output folder", function()
+    local _, app = setup()
+    app:set_setting("output_dir", "~/Music/EP")
+    assert.are.equal(os.getenv("HOME") .. "/Music/EP", app:output_dir())
   end)
 
   it("follows the new path after Save As", function()

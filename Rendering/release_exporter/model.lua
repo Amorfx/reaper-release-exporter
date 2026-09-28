@@ -109,6 +109,20 @@ function M.format_filename(pattern, resolved)
   return M.sanitize_filename(name)
 end
 
+-- "/…" on macOS and Linux, "C:\…", "C:/…" or "\\server\…" on Windows. A relative folder would be resolved
+-- by REAPER against a folder we do not control.
+function M.is_absolute_path(path)
+  return path:match("^/") ~= nil or path:match("^%a:[/\\]") ~= nil or path:match("^\\\\") ~= nil
+end
+
+-- "~" and "~/…" stand for the home folder; "~user" and a "~" further in the path are left alone.
+function M.expand_home(path, home)
+  if not home or home == "" then return path end
+  if path == "~" then return home end
+  if path:sub(1, 2) == "~/" then return home .. path:sub(2) end
+  return path
+end
+
 function M.default_output_dir(project_dir, album)
   if M.blank(project_dir) then return "" end
   local folder = M.blank(album) and "Release" or M.sanitize_filename(album)
@@ -159,7 +173,13 @@ function M.validate(ep, rows, settings, output_dir, opts)
   elseif opts.file_exists and not opts.file_exists(trim(ep.cover)) then
     warn("ep.cover", "Cover image not found; it will be skipped.")
   end
-  if M.blank(output_dir) then err("settings.output_dir", "Save the project or choose an output folder.") end
+  if M.blank(output_dir) then
+    err("settings.output_dir", "Save the project or choose an output folder.")
+  elseif not M.is_absolute_path(output_dir) then
+    err("settings.output_dir", "Output folder must be a full path, such as /Users/you/Music or C:\\Music.")
+  elseif opts.folder_writable and not opts.folder_writable(output_dir) then
+    err("settings.output_dir", "Output folder cannot be created. Check the path and your permissions.")
+  end
 
   local included = 0
   for _, row in ipairs(rows) do

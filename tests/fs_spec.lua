@@ -43,3 +43,31 @@ describe("fs.choose_image", function()
     assert.are.equal("", ext)
   end)
 end)
+
+describe("fs.can_create_dir", function()
+  local function tmp()
+    local base = os.tmpname()
+    os.remove(base)
+    os.execute('mkdir -p "' .. base .. '"')
+    return base
+  end
+
+  it("accepts an existing writable folder and a missing one below it, without creating anything", function()
+    local base = tmp()
+    assert.is_true(fs.can_create_dir(base))
+    assert.is_true(fs.can_create_dir(base .. "/a/b"))
+    assert.is_false(fs.exists(base .. "/a"))
+    assert.is_false(fs.exists(base .. "/.release_exporter_probe"))
+  end)
+
+  it("rejects a folder whose nearest existing parent is read-only", function()
+    local base = tmp()
+    os.execute('chmod 555 "' .. base .. '"')
+    assert.is_false(fs.can_create_dir(base .. "/new"))
+    os.execute('chmod 755 "' .. base .. '"')
+  end)
+
+  it("rejects a path below a file", function()
+    assert.is_false(fs.can_create_dir("/dev/null/nope"))
+  end)
+end)

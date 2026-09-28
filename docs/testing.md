@@ -21,6 +21,8 @@ Run on REAPER 7.80 (the only supported and tested version), with ReaImGui ≥ 0.
 - [ ] Set render dialog options first (e.g. region matrix bounds, a custom pattern, some metadata). Export WAV 24 + MP3 → the report says OK for 2 songs, and the render dialog options are unchanged afterwards.
 - [ ] `exiftool -G1 -a "02 - <title>.mp3"` shows title, artist, album, track `2/2`, date, ISRC and a front cover picture.
 - [ ] Switch to WAV 16 + FLAC, export again → the overwrite prompt lists 4 files. `exiftool -G1 -a` on the FLAC shows the Vorbis tags and the picture.
+- [ ] In *Settings*, type `Exports` as the output folder → the field and a chip turn red ("must be a full path"). Type `~/Music/Test` → accepted, the summary shows the full path under your home folder.
+- [ ] Type `/Volumes/Nothing/EP` → "Output folder cannot be created" blocks Export, and nothing is created on disk.
 - [ ] Unsaved new project with regions → the "Save the project or choose an output folder." error blocks Export.
 - [ ] A title with `AC/DC: Live?` → exported as `01 - AC-DC- Live-.wav`.
 - [ ] Open two project tabs with different data and switch between them → the window follows the active tab.

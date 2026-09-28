@@ -51,7 +51,15 @@ end
 function App:rebuild()
   self.rows = model.build_rows(regions.list(self.r, self.proj), self.tracks)
   self.validation = model.validate(self.ep, self.rows, self.settings, self:output_dir(),
-    { file_exists = self.r.file_exists })
+    { file_exists = self.r.file_exists, folder_writable = function(dir) return self:folder_writable(dir) end })
+end
+
+-- Cached per path: the check touches the disk, and rebuild runs on every change.
+function App:folder_writable(dir)
+  if self.folder_check and self.folder_check.dir == dir then return self.folder_check.ok end
+  local ok = fs.can_create_dir(dir)
+  self.folder_check = { dir = dir, ok = ok }
+  return ok
 end
 
 function App:project_dir()
@@ -59,7 +67,9 @@ function App:project_dir()
 end
 
 function App:output_dir()
-  if not model.blank(self.settings.output_dir) then return self.settings.output_dir end
+  if not model.blank(self.settings.output_dir) then
+    return model.expand_home(self.settings.output_dir, os.getenv("HOME") or os.getenv("USERPROFILE"))
+  end
   return model.default_output_dir(self:project_dir(), self.ep.album)
 end
 

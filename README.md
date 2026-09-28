@@ -106,7 +106,7 @@ change them:
 
 | Setting | Default | Options |
 |---|---|---|
-| Output folder | `<project folder>/Exports/<Release title>` | Any absolute folder |
+| Output folder | `<project folder>/Exports/<Release title>` | A full path; `~/…` stands for your home folder |
 | File name pattern | `{nn} - {title}` | See [File names](#file-names) |
 | Main format | WAV 24-bit | WAV 24-bit, WAV 16-bit |
 | Second format | MP3 320 kbps | MP3 320 kbps (CBR), FLAC (24-bit), None |
@@ -175,6 +175,7 @@ are replaced by `-`, so `AC/DC: Live?` becomes `AC-DC- Live-`.
 | No song included | |
 | Two songs producing the same file name | |
 | Unsaved project and no output folder | |
+| Output folder that is not a full path, or that cannot be created | |
 
 ## Good to know
 
@@ -200,6 +201,12 @@ faulty cell is red.
 
 **"Save the project or choose an output folder."** The default output folder is next to the project file, so a
 new project needs to be saved first, or you can pick a folder in *Settings*.
+
+**"Output folder must be a full path…"** The folder in *Settings* is relative (`Exports`, `../Mix`): type the whole
+path, such as `/Users/you/Music/Releases`, or start it with `~/` for your home folder.
+
+**"Output folder cannot be created…"** Neither the folder nor any of its parents can be written to: a disconnected
+drive, a typo in `/Volumes/…`, or a folder you don't have write access to.
 
 **A song reports "Cannot overwrite …".** The file is open in another application (a player, a DAW). Close it and
 export again.
