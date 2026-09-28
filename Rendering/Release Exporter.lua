@@ -1,7 +1,12 @@
 -- @description Release Exporter: tag a single, EP or album and export every song in one click
 -- @author Clément Décou
--- @link https://github.com/Amorfx/reaper-release-plugin
+-- @link https://github.com/Amorfx/reaper-release-exporter
 -- @version 0.1.0
+-- @changelog
+--   First release.
+--   - One window for the release (artist, title, date, genre, label, copyright, cover) and its songs (one region each).
+--   - Exports every song as WAV 24/16-bit plus MP3 320 kbps or FLAC 24-bit, with ID3, RIFF and Vorbis tags and the cover.
+--   - Checks everything before exporting, never overwrites without asking and restores your render settings.
 -- @about
 --   Fill release-level and per-song metadata (title, artist, ISRC, composer, cover...) in one window,
 --   then render every region of the project as WAV + MP3/FLAC with embedded tags.
