@@ -70,6 +70,16 @@ local function render_one(r, proj, job, opts)
   local _, targets = r.GetSetProjectInfo_String(proj, "RENDER_TARGETS", "", false)
   local files = split(targets, ";")
   if #files == 0 then return false, files, "REAPER reported no file to render." end
+  -- Only files the user saw in the confirmation may be deleted or written. Paths are compared loosely,
+  -- as macOS and Windows file names are case-insensitive.
+  if job.files then
+    local announced = {}
+    local function key(path) return path:gsub("[/\\]+", "/"):lower() end
+    for _, path in ipairs(job.files) do announced[key(path)] = true end
+    for _, path in ipairs(files) do
+      if not announced[key(path)] then return false, files, "REAPER would write a file that was not announced: " .. path end
+    end
+  end
   for _, path in ipairs(files) do
     -- A file we cannot delete would make REAPER show its own overwrite prompt mid-batch.
     if fs.exists(path) and not fs.remove(path) then return false, files, "Cannot overwrite " .. path end

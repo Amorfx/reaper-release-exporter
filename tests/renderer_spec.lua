@@ -57,6 +57,21 @@ describe("renderer.render", function()
     assert.are.same({ opts.output_dir .. "/01 - Intro.wav", opts.output_dir .. "/01 - Intro.mp3" }, report.items[1].files)
   end)
 
+  it("never touches a file that was not announced to the user", function()
+    local r = fake.new()
+    local stale = opts.output_dir .. "/01 - Intro.mp3"
+    local f = io.open(stale, "wb")
+    f:write("old")
+    f:close()
+    local announced = job("01 - Intro", 0, 10)
+    announced.files = { opts.output_dir .. "/01 - Intro.wav" } -- REAPER will also want the .mp3
+    local report = renderer.render(r, r.proj, { announced }, opts)
+    assert.is_false(report.items[1].ok)
+    assert.is_truthy(report.items[1].error:find("not announced", 1, true))
+    assert.are.equal(0, #r.commands)
+    assert.is_true(fs.exists(stale))
+  end)
+
   it("forces master mix, custom bounds, embedded metadata and no add-to-project", function()
     local r = fake.new()
     user_setup(r)
