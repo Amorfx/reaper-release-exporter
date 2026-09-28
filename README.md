@@ -2,7 +2,7 @@
 
 **Tag a single, EP or album in one window and export every song as WAV + MP3/FLAC in one click.**
 
-[![CI](https://github.com/Amorfx/reaper-release-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/Amorfx/reaper-release-plugin/actions/workflows/ci.yml)
+[![CI](https://github.com/Amorfx/reaper-release-exporter/actions/workflows/ci.yml/badge.svg)](https://github.com/Amorfx/reaper-release-exporter/actions/workflows/ci.yml)
 ![REAPER 7.80+](https://img.shields.io/badge/REAPER-7.80%2B-2FB67C)
 ![ReaImGui](https://img.shields.io/badge/requires-ReaImGui-555)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -50,7 +50,7 @@ Release Exporter is installed with [ReaPack](https://reapack.com), REAPER's pack
 3. **Add this repository**: *Extensions > ReaPack > Import repositories…*, paste the URL below and click *OK*.
 
    ```
-   https://github.com/Amorfx/reaper-release-plugin/raw/main/index.xml
+   https://github.com/Amorfx/reaper-release-exporter/raw/main/index.xml
    ```
 
    <img src="docs/images/reapack-import.png" width="605" alt="ReaPack's Import repositories dialog with the Release Exporter URL">
@@ -61,6 +61,11 @@ Release Exporter is installed with [ReaPack](https://reapack.com), REAPER's pack
    **Script: Release Exporter.lua**. Tip: add it to a toolbar or give it a shortcut from the same list.
 
 ReaPack keeps the script up to date: *Extensions > ReaPack > Synchronize packages*.
+
+**Without ReaPack**: download `release-exporter-<version>.zip` from the
+[latest release](https://github.com/Amorfx/reaper-release-exporter/releases/latest), unzip it into REAPER's `Scripts`
+folder (*Options > Show REAPER resource path*) and load `release-exporter/Release Exporter.lua` from the *Actions* list
+(*New action > Load ReaScript…*). You will have to update it by hand.
 
 ## Quick start
 
@@ -213,7 +218,7 @@ drive, a typo in `/Volumes/…`, or a folder you don't have write access to.
 **A song reports "Cannot overwrite …".** The file is open in another application (a player, a DAW). Close it and
 export again.
 
-Found a bug or have an idea? [Open an issue](https://github.com/Amorfx/reaper-release-plugin/issues).
+Found a bug or have an idea? [Open an issue](https://github.com/Amorfx/reaper-release-exporter/issues).
 
 ## Development
 
@@ -239,7 +244,7 @@ To try your changes in REAPER, link the repository into REAPER's `Scripts` folde
 (*Options > Show REAPER resource path*) and load `Rendering/Release Exporter.lua` from the *Actions* list:
 
 ```sh
-ln -s "$PWD" "<resource path>/Scripts/reaper-release-plugin"
+ln -s "$PWD" "<resource path>/Scripts/reaper-release-exporter"
 ```
 
 ## License

@@ -33,6 +33,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # One call only: --name also scans and writes the index, so a separate call would leave nothing to commit.
       # The first index scans the whole history. --amend makes 0.1.0 point to the latest files instead of the
       # commit that first declared that version. Later runs index new commits only, without amending.
       - name: Preview the index (pull requests)
@@ -40,14 +41,12 @@ jobs:
         run: |
           flags=""
           [ -f index.xml ] || flags="--amend"
-          reapack-index --no-commit --name "$INDEX_NAME"
-          reapack-index --no-commit $flags
+          reapack-index --no-commit --name "$INDEX_NAME" $flags
           cat index.xml
       - name: Update and push the index (main)
         if: github.event_name == 'push'
         run: |
           flags=""
           [ -f index.xml ] || flags="--amend"
-          reapack-index --no-commit --name "$INDEX_NAME"
-          reapack-index --commit $flags
+          reapack-index --commit --name "$INDEX_NAME" $flags
           git push origin HEAD:main
