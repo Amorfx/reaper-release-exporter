@@ -49,6 +49,7 @@ function App:refresh(force)
 end
 
 function App:rebuild()
+  self.planned = nil
   self.rows = model.build_rows(regions.list(self.r, self.proj), self.tracks)
   self.validation = model.validate(self.ep, self.rows, self.settings, self:output_dir(),
     { file_exists = self.r.file_exists, folder_writable = function(dir) return self:folder_writable(dir) end })
@@ -98,15 +99,19 @@ function App:set_setting(field, value)
   self:rebuild()
 end
 
+-- Planned once per rebuild: the export bar asks for it every frame, and it touches the disk for the cover.
 function App:jobs()
+  if self.planned then return self.planned end
   local ep = self.ep
-  if not model.blank(ep.cover) and not self.r.file_exists(ep.cover) then
+  -- A missing cover file is skipped (validation warns about it), checked on the same trimmed path it uses.
+  if not model.blank(ep.cover) and not self.r.file_exists(model.trim(ep.cover)) then
     ep = {}
     for k, v in pairs(self.ep) do ep[k] = v end
     ep.cover = ""
   end
   local jobs = model.plan_outputs(ep, self.rows, self.settings, self:output_dir())
   for _, job in ipairs(jobs) do job.tags = mapper.build(job.resolved) end
+  self.planned = jobs
   return jobs
 end
 
@@ -142,7 +147,10 @@ function App:export()
   if proj ~= self.proj or (projfn or "") ~= self.projfn then
     report = { items = {}, error = "The active project changed; review it and export again." }
   else
+    -- Re-plan even without a project change: the cover or the output folder may have changed on disk.
     self:refresh()
+    self.folder_check = nil
+    self:rebuild()
     if not self:can_export() then
       report = { items = {}, error = self.validation.errors[1].message }
     end

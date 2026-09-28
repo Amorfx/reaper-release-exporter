@@ -125,6 +125,23 @@ describe("app", function()
     end
   end)
 
+  it("re-plans right before exporting, so a cover deleted meanwhile is skipped", function()
+    local base = os.tmpname()
+    os.remove(base)
+    local r = fake.new()
+    r.projfn = base .. "/EP.rpp"
+    r.add_region(0, 10, "Intro")
+    local app = App.new(r)
+    fill_ep(app)
+    local present = true
+    r.file_exists = function() return present end
+    app:set_ep_field("cover", "/art/cover.jpg")
+    app:jobs()
+    present = false -- deleted after the confirmation, without any project change
+    app:export()
+    assert.is_nil(r.commands[1].metadata["ID3:APIC_FILE"])
+  end)
+
   it("exports every included song and keeps the report", function()
     local base = os.tmpname()
     os.remove(base)
@@ -188,6 +205,28 @@ describe("app", function()
     r.add_region(0, 10, "Intro")
     app:refresh(true)
     assert.is_true(app:shows_issues())
+  end)
+
+  it("plans the export once per change, not once per frame", function()
+    local r, app = setup()
+    fill_ep(app)
+    app:set_ep_field("cover", "/art/cover.jpg")
+    local checks = 0
+    local file_exists = r.file_exists
+    r.file_exists = function(path) checks = checks + 1 return file_exists(path) end
+    app:jobs()
+    local after_first = checks
+    app:jobs()
+    app:jobs()
+    assert.are.equal(after_first, checks)
+  end)
+
+  it("keeps a cover whose path has stray spaces", function()
+    local r, app = setup()
+    fill_ep(app)
+    r.file_exists = function(path) return path == "/art/cover.jpg" end
+    app:set_ep_field("cover", " /art/cover.jpg ")
+    assert.are.equal("/art/cover.jpg", app:jobs()[1].resolved.cover)
   end)
 
   it("expands ~ in the output folder", function()
