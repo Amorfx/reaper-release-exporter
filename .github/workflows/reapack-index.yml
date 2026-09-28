@@ -1,0 +1,53 @@
+name: ReaPack index
+# Keeps index.xml (the file ReaPack reads) in sync with main. Pull requests only preview it.
+# Ship a new version by bumping @version in "Rendering/Release Exporter.lua".
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  INDEX_NAME: Release Exporter
+
+concurrency:
+  group: reapack-index-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
+      - run: gem install reapack-index
+      - name: Configure the commit author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # The first index scans the whole history. --amend makes 0.1.0 point to the latest files instead of the
+      # commit that first declared that version. Later runs index new commits only, without amending.
+      - name: Preview the index (pull requests)
+        if: github.event_name != 'push'
+        run: |
+          flags=""
+          [ -f index.xml ] || flags="--amend"
+          reapack-index --no-commit --name "$INDEX_NAME"
+          reapack-index --no-commit $flags
+          cat index.xml
+      - name: Update and push the index (main)
+        if: github.event_name == 'push'
+        run: |
+          flags=""
+          [ -f index.xml ] || flags="--amend"
+          reapack-index --no-commit --name "$INDEX_NAME"
+          reapack-index --commit $flags
+          git push origin HEAD:main

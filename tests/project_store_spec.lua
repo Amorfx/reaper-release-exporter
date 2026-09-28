@@ -1,0 +1,87 @@
+local fake = require("tests.support.fake_reaper")
+local store = require("release_exporter.project_store")
+local model = require("release_exporter.model")
+
+describe("project_store", function()
+  it("returns defaults for a fresh project", function()
+    local r = fake.new()
+    local data = store.load(r, r.proj)
+    assert.are.same(model.new_ep(), data.ep)
+    assert.are.same(model.default_settings(), data.settings)
+    assert.are.same({}, data.tracks)
+  end)
+
+  it("round-trips the release, tracks and settings and marks the project dirty", function()
+    local r = fake.new()
+    local ep = model.new_ep()
+    ep.artist = "Clem"
+    store.save_ep(r, r.proj, ep)
+    store.save_track(r, r.proj, "{A}", { include = false, artist = "X", isrc = "FRXXX2600001", composer = "" })
+    local settings = model.default_settings()
+    settings.pattern, settings.output_dir = "{title}", "/out"
+    store.save_settings(r, r.proj, settings)
+
+    local data = store.load(r, r.proj)
+    assert.are.equal("Clem", data.ep.artist)
+    assert.is_false(data.tracks["{A}"].include)
+    assert.are.equal("{title}", data.settings.pattern)
+    assert.are.equal("/out", data.settings.output_dir)
+    assert.are.equal(3, r.dirty)
+  end)
+
+  it("uses the last settings as defaults for a new project, without the folder", function()
+    local r = fake.new()
+    local settings = model.default_settings()
+    settings.secondary, settings.output_dir = "flac", "/old/out"
+    store.save_settings(r, r.proj, settings)
+    r.switch_project()
+
+    local data = store.load(r, r.proj)
+    assert.are.equal("flac", data.settings.secondary)
+    assert.are.equal("", data.settings.output_dir)
+  end)
+
+  it("falls back field by field on corrupted or mistyped data", function()
+    local r = fake.new()
+    r.SetProjExtState(r.proj, store.EXT, "ep", "{not json")
+    r.SetProjExtState(r.proj, store.EXT, "settings", '{"pattern":42,"secondary":"flac"}')
+    r.SetProjExtState(r.proj, store.EXT, "track:{A}", "[]")
+
+    local data = store.load(r, r.proj)
+    assert.are.same(model.new_ep(), data.ep)
+    assert.are.equal("{nn} - {title}", data.settings.pattern)
+    assert.are.equal("flac", data.settings.secondary)
+    assert.is_true(data.tracks["{A}"].include)
+  end)
+
+  it("reads track keys regardless of case", function()
+    local r = fake.new()
+    r.SetProjExtState(r.proj, store.EXT, "TRACK:{A}", '{"isrc":"FRXXX2600001"}')
+    assert.are.equal("FRXXX2600001", store.load(r, r.proj).tracks["{A}"].isrc)
+  end)
+  it("falls back when a choice field holds an unknown value", function()
+    local r = fake.new()
+    r.SetProjExtState(r.proj, store.EXT, "settings",
+      '{"primary":"WAV24","secondary":"mp3","srate":22050,"pattern":"  ","output_dir":"/out"}')
+    local s = store.load(r, r.proj).settings
+    assert.are.equal("wav24", s.primary)
+    assert.are.equal("mp3_320", s.secondary)
+    assert.are.equal(0, s.srate)
+    assert.are.equal("{nn} - {title}", s.pattern)
+    assert.are.equal("/out", s.output_dir)
+  end)
+
+  it("sanitizes the global default settings too", function()
+    local r = fake.new()
+    r.SetExtState(store.EXT, "default_settings", '{"primary":"nope","secondary":"flac"}', true)
+    local s = store.load(r, r.proj).settings
+    assert.are.equal("wav24", s.primary)
+    assert.are.equal("flac", s.secondary)
+  end)
+
+  it("upper-cases GUIDs read from track keys", function()
+    local r = fake.new()
+    r.SetProjExtState(r.proj, store.EXT, "track:{abc}", '{"isrc":"FRXXX2600001"}')
+    assert.are.equal("FRXXX2600001", store.load(r, r.proj).tracks["{ABC}"].isrc)
+  end)
+end)
