@@ -161,7 +161,9 @@ The pattern is applied to each song, then the extension is added.
 | `{year}` | Release date as typed | `2026` |
 
 `{nn} - {artist} - {title}` gives `02 - Élise Moreau - Night Drive.wav`. The characters `/ \ : * ? " < > | $ ;`
-are replaced by `-`, so `AC/DC: Live?` becomes `AC-DC- Live-`.
+are replaced by `-`, so `AC/DC: Live?` becomes `AC-DC- Live-`. Names stay valid on Windows too: leading dots
+are removed, names that Windows reserves (`CON`, `NUL`, `COM1`…) get a trailing `-`, and very long titles are
+shortened.
 
 ### What blocks the export
 

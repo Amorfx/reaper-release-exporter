@@ -89,10 +89,24 @@ function M.resolve(ep, row)
 end
 
 -- `$` would be read as a REAPER wildcard and `;` separates RENDER_TARGETS entries.
+M.trim = trim
+
+-- Device names Windows refuses as file names, whatever the extension.
+local RESERVED = { CON = true, PRN = true, AUX = true, NUL = true }
+for i = 1, 9 do RESERVED["COM" .. i], RESERVED["LPT" .. i] = true, true end
+-- Leaves room for the folder and the extension within the usual 255-byte limit.
+local MAX_BYTES = 200
+
 function M.sanitize_filename(name)
   local s = (name or ""):gsub('[/\\:%*%?"<>|%$;%c]', "-")
-  s = s:gsub("^%s+", ""):gsub("[%s%.]+$", "")
+  s = s:gsub("^[%s%.]+", ""):gsub("[%s%.]+$", "") -- a leading dot would hide the file
+  while #s > MAX_BYTES do
+    local last = utf8.offset(s, -1) -- drop whole characters only; nil on invalid UTF-8
+    s = last and s:sub(1, last - 1) or s:sub(1, MAX_BYTES)
+  end
+  s = s:gsub("[%s%.]+$", "")
   if s == "" then return "untitled" end
+  if RESERVED[s:upper()] then return s .. "-" end
   return s
 end
 

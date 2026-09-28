@@ -93,6 +93,17 @@ describe("model file names", function()
     assert.are.equal("untitled", model.sanitize_filename("   "))
   end)
 
+  it("keeps file names valid on Windows too", function()
+    assert.are.equal("con-", model.sanitize_filename("con"))
+    assert.is_true(#model.sanitize_filename(string.rep("\xff", 300)) <= 200) -- invalid UTF-8 does not crash
+    assert.are.equal("LPT1-", model.sanitize_filename("LPT1"))
+    assert.are.equal("Console", model.sanitize_filename("Console"))
+    assert.are.equal("hidden", model.sanitize_filename("..hidden"))
+    local long = model.sanitize_filename(string.rep("é", 150)) -- 300 bytes
+    assert.is_true(#long <= 200)
+    assert.is_truthy(utf8.len(long)) -- never cut inside a character
+  end)
+
   it("expands known tokens and leaves unknown ones", function()
     local name = model.format_filename("{nn} - {artist} - {title} ({year}) {unknown}",
       { number = 3, title = "Néons", artist = "Clem", album = "Nuits", year = "2026" })
